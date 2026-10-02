@@ -27,6 +27,6 @@ The approved project context is limited to a local-first product intended to orc
 
 ## GEF state
 
-GEF Bootstrap CLI `@gef-bootstrap/cli@1.1.2` is pinned in `package.json` and `package-lock.json`. The official `gef init --apply` created `.gef/init-state.json` and its transaction receipt under `.gef/`. Local transaction journals and recovery data under `.gef-private/` are excluded from Git.
+GEF Bootstrap CLI `@gef-bootstrap/cli@1.1.2` is pinned in `package.json` and `package-lock.json`. The official `gef init --apply` created `.gef/init-state.json`; a later `gef adopt --apply` recorded the completed foundation source pack in `.gef/adopt-state.json`. Both transaction receipts are retained under `.gef/`. Local transaction journals and recovery data under `.gef-private/` are excluded from Git.
 
 The v1.1.2 package does not provide a generic consumer Source Pack or repository workflow template set. Its official initialization creates GEF-managed state and a receipt; this project's honest Source Pack and baseline workflow are therefore authored from the Work Order. The CLI exposes `init`, `adopt`, `upgrade`, `doctor`, and `status`; no separate `validate` command is present.

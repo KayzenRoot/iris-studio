@@ -38,6 +38,7 @@ for (const path of requiredFiles) {
 const manifest = readJson("package.json");
 const lock = readJson("package-lock.json");
 const gefState = readJson(".gef/init-state.json");
+const gefAdoptState = readJson(".gef/adopt-state.json");
 const checkpoint = readJson(".engineering/CHECKPOINT.json");
 const gefVersion = "1.1.2";
 
@@ -59,6 +60,10 @@ if (lock) {
 
 if (gefState?.kind !== "gef.init.state" || gefState?.productVersion !== gefVersion) {
   errors.push(`.gef/init-state.json must record successful GEF ${gefVersion} initialization`);
+}
+
+if (gefAdoptState?.kind !== "gef.adopt.state" || gefAdoptState?.productVersion !== gefVersion) {
+  errors.push(`.gef/adopt-state.json must record the managed GEF ${gefVersion} foundation baseline`);
 }
 
 if (checkpoint?.schemaVersion !== 2 || checkpoint?.project !== "IRIS Studio") {
