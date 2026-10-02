@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "project": "IRIS Studio",
+  "status": "FOUNDATION_IN_PROGRESS",
+  "phase": "REPOSITORY_FOUNDATION",
+  "activeWorkOrder": "IRIS-STUDIO-WO-0001",
+  "overallCompletionPercent": 0,
+  "remainingCompletionPercent": 100,
+  "nextLegalStage": "MVP_PLANNING",
+  "stopState": "IRIS_STUDIO_WO_0001_PENDING_FINAL_GATES",
+  "v11": null
+}

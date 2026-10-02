@@ -1,0 +1,8 @@
+# Ownership map adapted from the GEF Bootstrap repository.
+# CODEOWNERS does not require a review unless the branch ruleset says so.
+/.github/workflows/ @KayzenRoot
+/.github/actions/ @KayzenRoot
+/.github/dependabot.yml @KayzenRoot
+/.github/CODEOWNERS @KayzenRoot
+/.engineering/ @KayzenRoot
+/AGENTS.md @KayzenRoot

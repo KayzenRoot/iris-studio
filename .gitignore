@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Generated output
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# GEF local private transaction journals and recovery data
+.gef-private/
+
+# Operating system and editor state
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
