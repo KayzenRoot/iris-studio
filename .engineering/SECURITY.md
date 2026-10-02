@@ -1,23 +1,45 @@
-# Security
+# Security baseline
 
-WO-0001 repository controls remain mandatory.
+## Repository controls inherited from WO-0001
+- GitHub secret scanning and push protection are enabled.
+- GitHub private vulnerability reporting is enabled.
+- Dependency vulnerability alerts and Dependabot security updates are enabled.
+- Workflow-level and repository-default `GITHUB_TOKEN` permissions are read-only.
+- Workflow actions are pinned to full commit SHAs, and the repository allows only the actions used by the baseline workflow.
+- `npm audit --audit-level=high` is part of baseline validation.
 
-## Trust boundaries
-Dashboard input; filesystem/workspace; Codex child process; ComfyUI localhost; Blender MCP/process; generated-site dependency/build scripts; browser preview.
+## GitHub security entitlement limits preserved from WO-0001
+The repository is public and owned by the personal GitHub user `KayzenRoot`. Provider-pattern secret scanning and push protection are enabled. Optional `secret_scanning_non_provider_patterns` and `secret_scanning_validity_checks` remain disabled under the current account/repository entitlement. Reassess only if ownership or entitlements change.
 
-## Controls
-- No OpenAI API key required/read/stored for MVP Codex path.
-- Never inspect/copy Codex auth tokens.
-- Spawn subprocesses with argument arrays, not user-built shell strings.
-- Allowlist executables and normalize/confine paths.
-- External outputs write only to approved project workspace by default.
-- ComfyUI/Blender MCP localhost-only by default.
-- No unrestricted arbitrary-Python Blender MCP tool in default mode.
-- Treat generated code/package scripts as untrusted until checks pass.
-- Redact/cap process logs.
-- Large/generated binaries stay out of IRIS Git.
+GEF `doctor` reports dependency provenance as `unverified` and GitHub security capability as `REVIEW` in the recorded foundation environment; toolchain/repository invariants passed. GEF 1.1.2 registry attestation metadata was present and the npm tarball SHA-256 matched the immutable release record. `npm audit signatures` was attempted but npm returned E404 while resolving bundled unpublished workspace dependency `@gef-bootstrap/kernel@0.0.0`; it is not a CI gate. These observations remain `REVIEW`, not PASS.
 
-## Risk
-M01/M03/M06/M07 STANDARD. M02/M04/M05/M08 ELEVATED and require path-confinement, failure/recovery and exposure review.
+## MVP trust boundaries
+1. Dashboard/user input.
+2. Local filesystem/project workspace.
+3. Codex child process.
+4. ComfyUI localhost service and workflow outputs.
+5. Blender MCP/process and Python execution environment.
+6. Generated website dependencies/build scripts.
+7. Browser preview.
 
-Existing GEF REVIEW states remain REVIEW.
+## MVP required controls
+- Never require, read, copy or persist an OpenAI API key for the primary MVP Codex path.
+- Never scrape Codex authentication stores/tokens; invoke the authenticated CLI as an external client.
+- Spawn child processes with argument arrays, not shell-concatenated user strings.
+- Allowlist executable paths and normalize/contain project paths.
+- Generated projects/tool outputs may write only inside approved project workspaces unless user explicitly selects another export path.
+- Do not expose Blender MCP or ComfyUI externally by default; localhost only.
+- Do not expose unrestricted arbitrary-Python Blender MCP tooling in default mode.
+- Treat generated code and package scripts as untrusted until quality/security checks pass.
+- Redact logs and cap retained process output.
+- Keep large/generated binary artifacts out of IRIS source Git history.
+
+## Risk levels
+M01, M03, M06, M07: STANDARD.
+M02, M04, M05, M08: ELEVATED because they execute local processes/models or resumable orchestration. ELEVATED increments require path-confinement tests, failure/recovery evidence and explicit subprocess/network review.
+
+## Privacy
+MVP is local-first. Data leaves the machine only through an external service already inherent to a configured tool. Codex jobs use the user's Codex/ChatGPT client path; IRIS must not silently introduce separate providers.
+
+## Reporting
+Use GitHub private vulnerability reporting for sensitive reports. Keep secrets/exploit-sensitive data out of public issues, PRs, logs and screenshots. See root SECURITY.md.
