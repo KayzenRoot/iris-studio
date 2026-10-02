@@ -1,12 +1,57 @@
 {
   "schemaVersion": 2,
   "project": "IRIS Studio",
-  "status": "FOUNDATION_IN_PROGRESS",
-  "phase": "REPOSITORY_FOUNDATION",
-  "activeWorkOrder": "IRIS-STUDIO-WO-0001",
+  "status": "MVP_PLANNING_APPROVED",
+  "phase": "MVP_PLANNING_COMPLETE",
+  "activeWorkOrder": null,
+  "lastApprovedWorkOrder": "IRIS-STUDIO-WO-0002",
   "overallCompletionPercent": 0,
   "remainingCompletionPercent": 100,
-  "nextLegalStage": "MVP_PLANNING",
-  "stopState": "IRIS_STUDIO_WO_0001_FINAL_GATES_VERIFIED",
-  "v11": null
+  "planningBaseSha": "5dba31f78985bbb25d64c41d3dcd23f12040f3fa",
+  "approvedPlanningHead": "84d4777f64ebc707fdd89bf5fc3c0e29e16efd98",
+  "plannedModules": [
+    {
+      "id": "M01",
+      "workOrder": "IRIS-STUDIO-WO-0003",
+      "name": "Local Core & Dashboard"
+    },
+    {
+      "id": "M02",
+      "workOrder": "IRIS-STUDIO-WO-0004",
+      "name": "Codex Bridge"
+    },
+    {
+      "id": "M03",
+      "workOrder": "IRIS-STUDIO-WO-0005",
+      "name": "Senior Art Director & Visual DNA"
+    },
+    {
+      "id": "M04",
+      "workOrder": "IRIS-STUDIO-WO-0006",
+      "name": "ComfyUI Visual Engine"
+    },
+    {
+      "id": "M05",
+      "workOrder": "IRIS-STUDIO-WO-0007",
+      "name": "Blender Creative MCP & 3D Engine"
+    },
+    {
+      "id": "M06",
+      "workOrder": "IRIS-STUDIO-WO-0008",
+      "name": "Complete Website Builder"
+    },
+    {
+      "id": "M07",
+      "workOrder": "IRIS-STUDIO-WO-0009",
+      "name": "Quality Gate & Auto-Correction"
+    },
+    {
+      "id": "M08",
+      "workOrder": "IRIS-STUDIO-WO-0010",
+      "name": "End-to-End Orchestrator & MVP Packaging"
+    }
+  ],
+  "nextLegalStage": "IRIS-STUDIO-WO-0003",
+  "stopState": "MVP_PLANNING_APPROVED_M01_NEXT",
+  "gefVersion": "1.1.2"
 }

@@ -1,5 +1,5 @@
-# Deployment
+# Deployment and local operation
 
-Product deployment and release topology: `TBD`. This work order does not choose hosting, packaging, update channels, or runtime distribution for IRIS Studio.
+IRIS MVP is host-native and opened locally in a browser. Docker is FUTURE, not a prerequisite. M08 provides install/start docs, prerequisite diagnostics, config example, data/workspace location and non-destructive recovery/reset instructions.
 
-The only current automation target is GitHub Actions validation for pull requests and pushes to `main`.
+Generated websites are independent source workspaces with documented build/run commands. Automatic hosting is out of scope and no single deployment vendor is hard-coded.

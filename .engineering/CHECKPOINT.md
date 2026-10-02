@@ -1,17 +1,26 @@
 # Checkpoint
 
-## Current state
+## MVP planning verdict
+- IRIS-STUDIO-WO-0001 repository foundation: COMPLETE.
+- IRIS-STUDIO-WO-0002 MVP planning: APPROVED.
+- Planning base main SHA: `5dba31f78985bbb25d64c41d3dcd23f12040f3fa`.
+- Approved planning head before merge: `84d4777f64ebc707fdd89bf5fc3c0e29e16efd98`.
+- Product implementation progress: 0%.
+- GEF Bootstrap: 1.1.2 pinned; historical REVIEW/stale drift remains a known limitation and is not reclassified.
+- Next legal implementation increment on main: M01 / IRIS-STUDIO-WO-0003.
 
-- Project stage: repository foundation for `IRIS-STUDIO-WO-0001`.
-- GEF: official initialization and managed baseline adoption applied; exact CLI version is 1.1.2.
-- Product implementation progress: 0; no IRIS Studio feature has been implemented.
-- Product requirements and architecture: `TBD`.
-- Base commit: `818eb53d53371fd595a6b8303f1ddc0d0fdcd0a8` on `main`, created under the Work Order's empty-repository exception and containing only a minimal README.
-- Work branch: `feat/IRIS-STUDIO-WO-0001-bootstrap`.
-- GEF `doctor` toolchain/repository invariants pass and the checkpoint is valid. GEF `status` still reports `UNEXPECTED`/stale drift against the pre-Source-Pack init observation; this state is disclosed in the Evidence Bundle.
+## Approved MVP modules
+1. M01 Local Core & Dashboard — WO-0003
+2. M02 Codex Bridge — WO-0004
+3. M03 Senior Art Director & Visual DNA — WO-0005
+4. M04 ComfyUI Visual Engine — WO-0006
+5. M05 Blender Creative MCP & 3D Engine — WO-0007
+6. M06 Complete Website Builder — WO-0008
+7. M07 Quality Gate & Auto-Correction — WO-0009
+8. M08 End-to-End Orchestrator & MVP Packaging — WO-0010
 
-## Closeout gate
+## Audit evidence
+The planning audit found one documentation-integrity defect: WO-0001 history had been over-compressed in DECISIONS-LEDGER/SECURITY. It was corrected on the same PR by restoring the approved foundation evidence. The planning baseline workflow then passed.
 
-IRIS-STUDIO-WO-0001 closeout is complete. The required `repository-baseline` check passed on the merged main commits for PR #1 (`d805a88335e452505d967340a680e907e2dc0064`, run `37065831185`) and PR #2 (`f7648731e5cfdb6f0966c550e5d3c59fb4b7a0c1`, run `37067010438`). GitHub governance and security settings were read back; entitlement-limited secret scanning options and remaining GEF `REVIEW` states are recorded in `.engineering/SECURITY.md` and the PR evidence.
-
-The repository foundation is ready for MVP planning. Product requirements and architecture remain `TBD`, product implementation progress remains 0, and `MVP_PLANNING` is the next legal stage. GEF `status` still reports stale/`UNEXPECTED` drift against the original initialization fingerprint; preserve that limitation as `REVIEW` rather than interpreting it as clean drift.
+## Stop rule
+WO-0002 contains documentation/planning only. Do not begin M02 or later work until their dependencies are APPROVED and merged. M01 is the sole next necessary implementation increment after this planning PR reaches main.

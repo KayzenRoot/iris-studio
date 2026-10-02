@@ -1,17 +1,14 @@
 # Project overview
 
-## Approved context
+IRIS Studio is a local-first visual website production application. A single operator describes the desired website in a dashboard, approves a Visual DNA/Site Blueprint, and IRIS orchestrates local ComfyUI, a custom Blender MCP/3D engine and the locally authenticated Codex CLI to produce a complete responsive optimized website source tree.
 
-IRIS Studio is intended to be local-first and to orchestrate high-quality website creation. This statement comes from the approved foundation Work Order and is the complete product context currently recorded here.
+## MVP promise
+Small feature surface, extreme output quality. Support conventional polished sites and highly visual ABSURD sites while preferring the lightest implementation preserving approved art direction.
 
-## Current stage
+A site is complete only when all requested pages, navigation, responsive behavior, media/motion fallbacks, buildability, quality evidence and final visual approval exist.
 
-This repository was created for the foundation increment `IRIS-STUDIO-WO-0001`. That increment establishes GEF Bootstrap 1.1.2, the canonical Source Pack, repository hygiene, CI, and GitHub governance. It does not implement IRIS Studio product behavior.
+## Core flow
+Brief -> Art Director -> approve DNA/Blueprint -> ComfyUI/Blender media -> Codex complete-site build -> quality/correction -> final approval -> READY.
 
-## Product definition
-
-Users, use cases, supported workflows, product capabilities, and acceptance criteria: `TBD` during MVP planning.
-
-## Architecture and technology
-
-Application framework, runtime, UI, storage, integrations, and deployment topology: `TBD`. No product implementation is present.
+## Modules
+Eight NECESSARY modules, WO-0003 through WO-0010. See MODULES.md.

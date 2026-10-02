@@ -1,18 +1,15 @@
 # IRIS Studio source hierarchy
 
-This directory is the canonical repository source pack. It records the approved project context and the foundation state without filling product decisions that have not been planned.
+This directory is the canonical repository Source Pack.
 
 ## Authority order
-
-1. An owner-approved Work Order and its Context Lock define the scope of an increment.
-2. `.engineering/REQUIREMENTS.md`, `SCOPE.md`, `ARCHITECTURE.md`, `DECISIONS-LEDGER.md`, and `SECURITY.md` record approved project decisions. Unapproved product choices remain `TBD`.
-3. `.engineering/CHECKPOINT.md` and `CHECKPOINT.json` report current progress; they do not grant scope or replace source decisions.
-4. `README.md` is the repository entry point. Root `AGENTS.md` supplies execution rules consistent with this hierarchy.
-
-The approved project context is limited to a local-first product intended to orchestrate high-quality website creation. Its product architecture, framework, database, integrations, deployment topology, features, and acceptance criteria remain `TBD`.
+1. Owner-approved Work Order and Context Lock define increment scope.
+2. `REQUIREMENTS.md`, `SCOPE.md`, `ARCHITECTURE.md`, `DECISIONS-LEDGER.md`, `DEFINITION-OF-DONE.md` and `SECURITY.md` record approved decisions.
+3. `TEST-PLAN.md`, `DEPLOYMENT.md`, `MODULES.md` and `BACKLOG.md` refine execution/validation.
+4. `CHECKPOINT.md` and `CHECKPOINT.json` report progress but do not grant scope.
+5. Root README/AGENTS are entry/execution guidance.
 
 ## Canonical documents
-
 - [Project overview](PROJECT-OVERVIEW.md)
 - [Requirements](REQUIREMENTS.md)
 - [Scope](SCOPE.md)
@@ -20,13 +17,14 @@ The approved project context is limited to a local-first product intended to orc
 - [Security](SECURITY.md)
 - [Test and benchmark plan](TEST-PLAN.md)
 - [Deployment](DEPLOYMENT.md)
+- [Modules](MODULES.md)
 - [Backlog](BACKLOG.md)
 - [Definition of done](DEFINITION-OF-DONE.md)
 - [Decisions ledger](DECISIONS-LEDGER.md)
-- [Checkpoint](CHECKPOINT.md) and [machine-readable checkpoint](CHECKPOINT.json)
+- [Checkpoint](CHECKPOINT.md) / [machine checkpoint](CHECKPOINT.json)
+- [Work Orders](work-orders/README.md)
 
-## GEF state
+## GEF state preserved from foundation
+GEF Bootstrap CLI `@gef-bootstrap/cli@1.1.2` is pinned in `package.json` and `package-lock.json`. Official `gef init --apply` created `.gef/init-state.json`; later `gef adopt --apply` created `.gef/adopt-state.json`. Receipts remain under `.gef/`; local journals/recovery under `.gef-private/` remain excluded from Git.
 
-GEF Bootstrap CLI `@gef-bootstrap/cli@1.1.2` is pinned in `package.json` and `package-lock.json`. The official `gef init --apply` created `.gef/init-state.json`; a later `gef adopt --apply` recorded the completed foundation source pack in `.gef/adopt-state.json`. Both transaction receipts are retained under `.gef/`. Local transaction journals and recovery data under `.gef-private/` are excluded from Git.
-
-The v1.1.2 package does not provide a generic consumer Source Pack or repository workflow template set. Its official initialization creates GEF-managed state and a receipt; this project's honest Source Pack and baseline workflow are therefore authored from the Work Order. The CLI exposes `init`, `adopt`, `upgrade`, `doctor`, and `status`; no separate `validate` command is present.
+GEF 1.1.2 does not provide a generic consumer Source Pack/workflow template set. Its CLI exposes `init`, `adopt`, `upgrade`, `doctor`, and `status`; no separate generic `validate` command exists. Historical stale/UNEXPECTED drift remains a known REVIEW state and must not be silently upgraded to PASS.
