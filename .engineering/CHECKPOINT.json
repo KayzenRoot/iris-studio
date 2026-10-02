@@ -1,12 +1,14 @@
 {
   "schemaVersion": 2,
   "project": "IRIS Studio",
-  "status": "MVP_PLANNING_IN_REVIEW",
-  "phase": "MVP_PLANNING",
-  "activeWorkOrder": "IRIS-STUDIO-WO-0002",
+  "status": "MVP_PLANNING_APPROVED",
+  "phase": "MVP_PLANNING_COMPLETE",
+  "activeWorkOrder": null,
+  "lastApprovedWorkOrder": "IRIS-STUDIO-WO-0002",
   "overallCompletionPercent": 0,
   "remainingCompletionPercent": 100,
   "planningBaseSha": "5dba31f78985bbb25d64c41d3dcd23f12040f3fa",
+  "approvedPlanningHead": "84d4777f64ebc707fdd89bf5fc3c0e29e16efd98",
   "plannedModules": [
     {
       "id": "M01",
@@ -50,6 +52,6 @@
     }
   ],
   "nextLegalStage": "IRIS-STUDIO-WO-0003",
-  "stopState": "PLANNING_PR_MUST_BE_APPROVED_AND_MERGED_BEFORE_IMPLEMENTATION",
+  "stopState": "MVP_PLANNING_APPROVED_M01_NEXT",
   "gefVersion": "1.1.2"
 }
