@@ -12,4 +12,6 @@
 
 ## Closeout gate
 
-The foundation checkpoint is a candidate until the feature branch is pushed, the PR's real checks are green, GitHub governance/security settings are read back, and the Evidence Bundle is complete. Preserve any `UNKNOWN` or `REVIEW` evidence states in closeout. MVP planning is next only after those gates pass.
+IRIS-STUDIO-WO-0001 closeout is complete. The required `repository-baseline` check passed on the merged main commits for PR #1 (`d805a88335e452505d967340a680e907e2dc0064`, run `37065831185`) and PR #2 (`f7648731e5cfdb6f0966c550e5d3c59fb4b7a0c1`, run `37067010438`). GitHub governance and security settings were read back; entitlement-limited secret scanning options and remaining GEF `REVIEW` states are recorded in `.engineering/SECURITY.md` and the PR evidence.
+
+The repository foundation is ready for MVP planning. Product requirements and architecture remain `TBD`, product implementation progress remains 0, and `MVP_PLANNING` is the next legal stage. GEF `status` still reports stale/`UNEXPECTED` drift against the original initialization fingerprint; preserve that limitation as `REVIEW` rather than interpreting it as clean drift.

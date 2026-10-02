@@ -7,6 +7,6 @@
   "overallCompletionPercent": 0,
   "remainingCompletionPercent": 100,
   "nextLegalStage": "MVP_PLANNING",
-  "stopState": "IRIS_STUDIO_WO_0001_PENDING_FINAL_GATES",
+  "stopState": "IRIS_STUDIO_WO_0001_FINAL_GATES_VERIFIED",
   "v11": null
 }
