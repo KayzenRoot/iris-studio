@@ -1,17 +1,11 @@
 # Test and benchmark plan
 
-## Foundation validation
+Layers: unit; SQLite/process/integration; Playwright desktop/mobile; security path/command tests; generated-site clean install/lint/typecheck/build/nav; accessibility/reduced-motion; performance/Lighthouse/asset budgets; optional local 3D frame sampling.
 
-The repository baseline is validated with:
+Generic CI must not fake Codex/ComfyUI/Blender availability. Use doubles in CI; live local runs record explicit evidence. Unavailable integration is SKIPPED/UNKNOWN, never PASS.
 
-- `npm ci` for deterministic clean dependency installation.
-- `npm run check:baseline` for the committed Source Pack, exact GEF version, lockfile, and generated GEF state.
-- `npm run gef:doctor` and `npm run gef:status` for the installed GEF diagnostics.
-- `npm audit --audit-level=high` for dependency vulnerability findings.
-- The GitHub Actions baseline workflow on the exact pull request head; GitHub also parses the workflow before running it.
+Default benchmark fixture gates: production build; no uncaught acceptance console errors; required routes; desktop/mobile smoke; Accessibility >=90; Lighthouse Performance >=90 desktop and >=80 mobile; CLS <=0.1; required reduced-motion/non-WebGL fallbacks.
 
-The GEF CLI exposes `init`, `adopt`, `upgrade`, `doctor`, and `status`; it does not expose a separate `validate` command. The installation procedure is verified by the installed version, `gef init --apply`, doctor/status diagnostics, npm lockfile, clean-install workflow, and audit.
+M07 allows at most two automatic correction rounds per cycle. Remaining failure blocks READY.
 
-## Product validation
-
-Application test layers, supported browsers/platforms, benchmarks, performance budgets, and acceptance data: `TBD` during MVP planning. No application test is claimed before product code exists.
+Existing npm/GEF baseline remains mandatory.

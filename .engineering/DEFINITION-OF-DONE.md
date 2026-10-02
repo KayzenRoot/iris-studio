@@ -1,18 +1,19 @@
-# Definition of done
+# Definition of Done
 
-## Foundation increment
+MVP complete only when:
+- M01-M08 APPROVED and merged.
+- Dashboard drives project creation without manual prompt shuttling.
+- Codex path works through local authenticated CLI with no IRIS API-key requirement.
+- Approved Visual DNA + complete Site Blueprint persist.
+- ComfyUI creates/selects high-quality 2D media.
+- Blender MCP creates/prepares/renders/exports validated website 3D.
+- Codex builds complete independent multi-page sites.
+- Build/browser/a11y/performance gates block READY on failure.
+- Bounded correction cannot loop indefinitely.
+- Final user visual approval required.
+- Run resumes/recoverably continues after restart.
+- One STANDARD and one ABSURD acceptance project complete end-to-end.
+- Docs/setup/recovery/checkpoint match proven behavior.
+- No known HIGH/CRITICAL issue remains.
 
-`IRIS-STUDIO-WO-0001` is complete when:
-
-- The exact official GEF package `@gef-bootstrap/cli@1.1.2` is installed, locked, and reproducible with `npm ci`.
-- Official GEF initialization is recorded and the available doctor/status diagnostics complete successfully; any `UNKNOWN` or `REVIEW` substate is reported accurately.
-- The canonical Source Pack is present and unapproved product decisions remain `TBD`.
-- Baseline workflows run successfully on the exact PR head, and required check names come from actual successful runs.
-- Repository rules, merge settings, Actions permissions, and available security features are read back and verified.
-- No unresolved HIGH or CRITICAL dependency finding is known.
-- No product feature or speculative application architecture is implemented.
-- The Work Order evidence and checkpoint delta are recorded in the PR and final report.
-
-## Product increments
-
-Product-specific completion criteria are `TBD` until MVP planning.
+Every module must satisfy its Work Order/Evidence/Audit before dependent module starts.

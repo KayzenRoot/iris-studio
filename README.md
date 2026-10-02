@@ -1,11 +1,12 @@
 # IRIS Studio
 
-IRIS Studio is intended to be a local-first tool for orchestrating high-quality website creation. This repository is at the foundation stage: product requirements and application architecture have not been approved, and no product features are implemented.
+IRIS Studio is a local-first application for orchestrating high-quality complete website creation with a dashboard, local ComfyUI, an IRIS-owned Blender MCP/3D engine and the user's locally authenticated Codex CLI.
 
-## Source hierarchy
+## Current status
+Repository foundation is complete. MVP planning is IRIS-STUDIO-WO-0002. Product implementation remains 0 until planning is approved and merged.
 
-The canonical project baseline is in [`.engineering/README.md`](.engineering/README.md). Start with the [project overview](.engineering/PROJECT-OVERVIEW.md), then consult the requirements, scope, architecture, security, validation, deployment, backlog, definition of done, decisions ledger, and checkpoint linked there. [AGENTS.md](AGENTS.md) describes the repository execution rules.
+## Canonical sources
+Start at [.engineering/README.md](.engineering/README.md). Modules: [.engineering/MODULES.md](.engineering/MODULES.md). Executable module Work Orders: [.engineering/work-orders/](.engineering/work-orders/).
 
-## Foundation status
-
-This foundation increment is governed by `IRIS-STUDIO-WO-0001`. It installs GEF Bootstrap `@gef-bootstrap/cli@1.1.2`, establishes repository automation and governance, and records product decisions as TBD until MVP planning. The [checkpoint](.engineering/CHECKPOINT.md) records the current state.
+## GEF
+GEF Bootstrap @gef-bootstrap/cli is pinned at 1.1.2. Preserve its baseline/evidence.

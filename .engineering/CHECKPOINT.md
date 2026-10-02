@@ -1,17 +1,14 @@
 # Checkpoint
 
-## Current state
+## Proposed state — WO-0002
+- WO-0001 foundation: complete.
+- Planning base main: 5dba31f78985bbb25d64c41d3dcd23f12040f3fa.
+- Planning branch: plan/IRIS-STUDIO-WO-0002-mvp.
+- Product implementation: 0%.
+- MVP architecture/modules/work orders defined, pending audit/merge.
+- Next legal implementation after approval: M01 / WO-0003.
+- GEF 1.1.2 remains pinned; historical REVIEW/stale drift remains known.
 
-- Project stage: repository foundation for `IRIS-STUDIO-WO-0001`.
-- GEF: official initialization and managed baseline adoption applied; exact CLI version is 1.1.2.
-- Product implementation progress: 0; no IRIS Studio feature has been implemented.
-- Product requirements and architecture: `TBD`.
-- Base commit: `818eb53d53371fd595a6b8303f1ddc0d0fdcd0a8` on `main`, created under the Work Order's empty-repository exception and containing only a minimal README.
-- Work branch: `feat/IRIS-STUDIO-WO-0001-bootstrap`.
-- GEF `doctor` toolchain/repository invariants pass and the checkpoint is valid. GEF `status` still reports `UNEXPECTED`/stale drift against the pre-Source-Pack init observation; this state is disclosed in the Evidence Bundle.
+Modules: M01 Local Core & Dashboard; M02 Codex Bridge; M03 Senior Art Director & Visual DNA; M04 ComfyUI Visual Engine; M05 Blender Creative MCP & 3D Engine; M06 Complete Website Builder; M07 Quality Gate & Auto-Correction; M08 End-to-End Orchestrator & MVP Packaging.
 
-## Closeout gate
-
-IRIS-STUDIO-WO-0001 closeout is complete. The required `repository-baseline` check passed on the merged main commits for PR #1 (`d805a88335e452505d967340a680e907e2dc0064`, run `37065831185`) and PR #2 (`f7648731e5cfdb6f0966c550e5d3c59fb4b7a0c1`, run `37067010438`). GitHub governance and security settings were read back; entitlement-limited secret scanning options and remaining GEF `REVIEW` states are recorded in `.engineering/SECURITY.md` and the PR evidence.
-
-The repository foundation is ready for MVP planning. Product requirements and architecture remain `TBD`, product implementation progress remains 0, and `MVP_PLANNING` is the next legal stage. GEF `status` still reports stale/`UNEXPECTED` drift against the original initialization fingerprint; preserve that limitation as `REVIEW` rather than interpreting it as clean drift.
+No product implementation may begin from this branch. Merge approved WO-0002 first.

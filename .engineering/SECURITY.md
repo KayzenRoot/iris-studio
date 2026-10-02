@@ -1,27 +1,23 @@
-# Security baseline
+# Security
 
-## Repository controls
+WO-0001 repository controls remain mandatory.
 
-- GitHub secret scanning and push protection are enabled.
-- GitHub private vulnerability reporting is enabled.
-- Dependency vulnerability alerts and Dependabot security updates are enabled.
-- Workflow-level and repository-default `GITHUB_TOKEN` permissions are read-only.
-- Workflow actions are pinned to full commit SHAs, and the repository allows only the actions used by the baseline workflow.
-- `npm audit --audit-level=high` is part of baseline validation.
-- Product-specific threat model, data classification, trust boundaries, and security requirements: `TBD` during MVP planning.
+## Trust boundaries
+Dashboard input; filesystem/workspace; Codex child process; ComfyUI localhost; Blender MCP/process; generated-site dependency/build scripts; browser preview.
 
-## GitHub security entitlement limits
+## Controls
+- No OpenAI API key required/read/stored for MVP Codex path.
+- Never inspect/copy Codex auth tokens.
+- Spawn subprocesses with argument arrays, not user-built shell strings.
+- Allowlist executables and normalize/confine paths.
+- External outputs write only to approved project workspace by default.
+- ComfyUI/Blender MCP localhost-only by default.
+- No unrestricted arbitrary-Python Blender MCP tool in default mode.
+- Treat generated code/package scripts as untrusted until checks pass.
+- Redact/cap process logs.
+- Large/generated binaries stay out of IRIS Git.
 
-The repository is public and owned by the personal GitHub user `KayzenRoot`. Provider-pattern secret scanning and push protection are enabled. The optional `secret_scanning_non_provider_patterns` and `secret_scanning_validity_checks` settings remain disabled; an API enablement request returned them as disabled. GitHub documents generic-pattern scanning for organization-owned repositories on GitHub Team with GitHub Secret Protection, and partner-pattern validity checks for organization-owned repositories on GitHub Team with GitHub Secret Protection. These settings are unavailable for this user-owned repository under its current account configuration. Reassess if ownership or entitlements change.
+## Risk
+M01/M03/M06/M07 STANDARD. M02/M04/M05/M08 ELEVATED and require path-confinement, failure/recovery and exposure review.
 
-References: [GitHub generic-pattern eligibility](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns) and [GitHub validity-check eligibility](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
-
-GEF `doctor` reports dependency provenance as `unverified` and GitHub security capability as `REVIEW` in this local environment; its toolchain and repository invariants pass. The 1.1.2 registry attestation metadata is present, and the downloaded npm tarball SHA-256 matches the immutable GEF release record. `npm audit signatures` was also attempted but exits with npm `E404` while resolving GEF's bundled, unpublished workspace dependency `@gef-bootstrap/kernel@0.0.0`; it is not used as a CI gate. These observations are retained as `REVIEW`, not converted to `PASS`.
-
-## Reporting
-
-Use GitHub private vulnerability reporting for sensitive vulnerability reports. Keep secrets and exploit-sensitive details out of public issues, pull requests, logs, and screenshots. See the root [Security Policy](../SECURITY.md).
-
-## Limits
-
-CodeQL is not configured while the repository contains no product source language for meaningful analysis. Reassess CodeQL when application source is admitted. No finding is inferred from the absence of a scan.
+Existing GEF REVIEW states remain REVIEW.
