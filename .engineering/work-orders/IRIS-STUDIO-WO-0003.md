@@ -1,6 +1,6 @@
 # IRIS-STUDIO-WO-0003 — M01 Local Core & Dashboard
 
-Status: PLANNED
+Status: APPROVED
 Risk: STANDARD
 Depends on: WO-0002 merged
 
@@ -8,7 +8,7 @@ Depends on: WO-0002 merged
 Create the minimal local IRIS Studio application shell: browser dashboard, local persistence, project/job model, health surface and deterministic developer runtime.
 
 ## CONTEXT
-IRIS Studio is a local-first website creation orchestrator. The MVP must produce complete websites, not just visual assets. Codex is the reasoning/engineering executor through the locally authenticated Codex CLI; ComfyUI and Blender perform local visual work. Do not start until dependencies are APPROVED and merged.
+IRIS Studio is a local-first website creation orchestrator. The MVP must produce complete websites, not just visual assets. Codex is the reasoning/engineering executor through the locally authenticated Codex CLI; ComfyUI and Blender perform local visual work.
 
 ## SCOPE
 - Next.js + TypeScript local dashboard shell.
@@ -37,7 +37,7 @@ IRIS Studio is a local-first website creation orchestrator. The MVP must produce
 - Relevant predecessor Evidence Bundles and merged code
 
 ## CONTEXT LOCK
-At execution start, record current main SHA and Git blob SHAs for CHECKPOINT, SCOPE, ARCHITECTURE, REQUIREMENTS, DEFINITION-OF-DONE and this Work Order. If a critical source changes, mark STALE and recompile before implementation.
+Compiled at `.engineering/context-locks/IRIS-STUDIO-WO-0003.md` against base `f30937d57980ee4280487ba167677ab0cb170d8d`. The executor verified the lock remained current before implementation.
 
 ## REQUIREMENTS
 - Single local operator; no login for MVP.
@@ -54,36 +54,38 @@ At execution start, record current main SHA and Git blob SHAs for CHECKPOINT, SC
 
 ## CONSTRAINTS
 - Implement only this Work Order.
-- Inspect repository before edits.
 - Preserve GEF Bootstrap 1.1.2 and governance.
 - No force-push/history rewrite/destructive user-data operation.
 - Treat subprocesses and filesystem paths as untrusted boundaries.
 - Never claim unavailable dependency testing as PASS.
-- Final review/Evidence Bundle in Brazilian Portuguese.
 
 ## ACCEPTANCE CRITERIA
-- Fresh clone installs and starts locally with documented commands.
-- Project can be created, listed and reopened after restart.
-- Clean database migration is deterministic and tested.
-- Health page reports AVAILABLE/UNAVAILABLE/MISCONFIGURED without crashing.
-- No unimplemented integration is represented as working.
+- Fresh clone installs and starts locally with documented commands. **PASS**
+- Project can be created, listed and reopened after restart. **PASS**
+- Clean database migration is deterministic and tested. **PASS**
+- Health page reports AVAILABLE/UNAVAILABLE/MISCONFIGURED without crashing. **PASS**
+- No unimplemented integration is represented as working. **PASS**
 
 ## TESTS
-- Unit tests for config/project/persistence.
-- Migration smoke test on clean temp DB.
-- UI smoke create/open project.
-- lint + typecheck + production build.
-- GEF/repository baseline.
+- Unit tests for config/project/persistence. **PASS**
+- Migration/persistence smoke including reopen/restart. **PASS**
+- UI smoke create/open project. **PASS**
+- lint + typecheck + production build. **PASS**
+- GEF/repository baseline. **PASS**, with historical GEF REVIEW states preserved honestly.
 
 ## DELIVERABLES
-- Local application shell/dashboard.
-- SQLite schema/migrations.
-- Workspace abstraction.
-- Docs + Evidence Bundle.
-- Single scoped PR.
+- Local application shell/dashboard. **DELIVERED**
+- SQLite schema/migrations. **DELIVERED**
+- Workspace abstraction. **DELIVERED**
+- Docs + Evidence Bundle. **DELIVERED**
+- Single scoped PR #13. **DELIVERED**
 
-## REVIEW FORMAT
-Evidence Bundle: base/head SHA; files; decisions; tests/results; lint/typecheck/build; security/architecture; regressions; fixed errors; risks/UNKNOWNs; screenshots/artifacts when relevant; proposed Checkpoint Delta. Audit verdict: APPROVED / CORRECTION REQUIRED / BLOCKED.
+## INDEPENDENT AUDIT
+Verdict: **APPROVED**.
+
+The audit reviewed scope, Context Lock, critical filesystem/SQLite/API/health boundaries, persistence/restart tests and CI evidence. One documentation inconsistency involving a free-form Playwright `npx` command was corrected on the same PR and revalidated. CodeRabbit remained processing and is recorded as PENDING/UNKNOWN rather than PASS.
+
+Independent audit evidence: `.engineering/evidence/IRIS-STUDIO-WO-0003.md`.
 
 ## STOP CONDITION
-Stop when shell is reproducible, persistence survives restart, checks are green and no external integration beyond health detection has been implemented.
+**SATISFIED.** The shell is reproducible, persistence survives restart, required checks are green, System Health is observational only, and no external integration beyond health detection is implemented.

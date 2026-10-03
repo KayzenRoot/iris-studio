@@ -1,26 +1,29 @@
 # Checkpoint
 
-## MVP planning verdict
-- IRIS-STUDIO-WO-0001 repository foundation: COMPLETE.
-- IRIS-STUDIO-WO-0002 MVP planning: APPROVED.
-- Planning base main SHA: `5dba31f78985bbb25d64c41d3dcd23f12040f3fa`.
-- Approved planning head before merge: `84d4777f64ebc707fdd89bf5fc3c0e29e16efd98`.
-- Product implementation progress: 0%.
-- GEF Bootstrap: 1.1.2 pinned; historical REVIEW/stale drift remains a known limitation and is not reclassified.
-- Next legal implementation increment on main: M01 / IRIS-STUDIO-WO-0003.
+## Current state
+- IRIS-STUDIO-WO-0001 repository foundation: **COMPLETE**.
+- IRIS-STUDIO-WO-0002 MVP planning: **APPROVED**.
+- IRIS-STUDIO-WO-0003 / M01 Local Core & Dashboard: **APPROVED**.
+- M01 execution base: `f30937d57980ee4280487ba167677ab0cb170d8d`.
+- Executor candidate before independent audit: `f8515dd874a5e96bd810e641dfdb9b3214a602f9`.
+- Independent-audit correction commit: `1b6758e0fe1cc6197fe785368c4b883153416c91`.
+- MVP module completion: **1 of 8 approved modules (12.5%)**.
+- GEF Bootstrap remains pinned at **1.1.2**. Historical provenance/mutable-ref/operator-stale/drift observations remain `REVIEW` / known limitation and are not reclassified.
+- Next legal implementation increment after this PR reaches `main`: **M02 / IRIS-STUDIO-WO-0004 — Codex Bridge**.
 
-## Approved MVP modules
-1. M01 Local Core & Dashboard — WO-0003
-2. M02 Codex Bridge — WO-0004
-3. M03 Senior Art Director & Visual DNA — WO-0005
-4. M04 ComfyUI Visual Engine — WO-0006
-5. M05 Blender Creative MCP & 3D Engine — WO-0007
-6. M06 Complete Website Builder — WO-0008
-7. M07 Quality Gate & Auto-Correction — WO-0009
-8. M08 End-to-End Orchestrator & MVP Packaging — WO-0010
+## M01 proven behavior
+- Host-native Next.js + TypeScript dashboard runs on loopback.
+- SQLite schema and ordered migrations initialize deterministically.
+- Projects and briefs can be created, listed, reopened, and survive a real process restart.
+- Project workspaces are isolated outside the source repository with path/symlink confinement checks.
+- System Health reports IRIS/SQLite plus observational Codex CLI, ComfyUI and Blender availability without executing those integrations.
+- Public project API does not expose physical workspace paths.
+- Required lint, typecheck, build, unit/E2E, dependency audit and repository/GEF baseline checks pass on the audited candidate.
 
-## Audit evidence
-The planning audit found one documentation-integrity defect: WO-0001 history had been over-compressed in DECISIONS-LEDGER/SECURITY. It was corrected on the same PR by restoring the approved foundation evidence. The planning baseline workflow then passed.
+## Independent audit
+The independent audit found one concrete documentation defect: `README.md` still instructed a free-form `npx playwright install chromium` even though CI had moved to the lockfile-backed Playwright command after a supply-chain finding. It was corrected in the same Work Order/PR to `npm run ci:install:playwright`, then the corrected HEAD was revalidated successfully.
+
+Sonar reports Quality Gate PASS and zero Security Hotspots, while also reporting non-gating maintainability annotations and no imported coverage metric. Socket reports no new dependency alerts. CodeRabbit was manually triggered after the PR left Draft but its review was still processing at checkpoint compilation; it is therefore `UNKNOWN/PENDING` and is not used as evidence of PASS.
 
 ## Stop rule
-WO-0002 contains documentation/planning only. Do not begin M02 or later work until their dependencies are APPROVED and merged. M01 is the sole next necessary implementation increment after this planning PR reaches main.
+M01 is complete after this approved checkpoint/evidence commit is validated and merged. Do not implement M03 or later work. M02 is the sole next necessary increment.

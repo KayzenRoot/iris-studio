@@ -20,7 +20,7 @@ jobs:
   repository-baseline:
     name: repository-baseline
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -48,6 +48,16 @@ jobs:
         run: |
           npm run gef:doctor
           npm run gef:status
+
+      - name: Install Chromium for browser smoke
+        run: npm run ci:install:playwright
+
+      - name: Validate M01 application
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+          npm test
 
       - name: Audit dependencies
         run: npm audit --audit-level=high

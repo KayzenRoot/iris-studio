@@ -31,3 +31,10 @@ WO-0001 approved no product architecture. Those decisions were deferred to MVP p
 - D-002-10: STANDARD/PREMIUM/ABSURD quality modes.
 - D-002-11: READY requires deterministic gates + final visual approval; automatic corrections are bounded.
 - D-002-12: Eight large implementation Work Orders WO-0003..WO-0010.
+
+## IRIS-STUDIO-WO-0003 — M01 implementation decisions
+- D-003-01: Pin Next.js 16.3.8, React 19.3.0, better-sqlite3 13.0.3, Zod 4.6.5, TypeScript 5.9.3, Playwright 1.63.0, Vitest 5.0.3, and ESLint 10.12.0 exactly in `package.json`/`package-lock.json`; preserve `@gef-bootstrap/cli` at exactly `1.1.2`.
+- D-003-02: Use `better-sqlite3` behind a server-side store with ordered SQL migrations for project, project brief, generation run, job, and artifact metadata.
+- D-003-03: Keep the application bound to `127.0.0.1`; use a per-user data directory outside the repository for SQLite and project workspaces. Require explicit data paths to be absolute and reject repository-contained paths, including symlink escapes.
+- D-003-04: M01 health is detection-only. Codex CLI and Blender are checked for executable presence; ComfyUI is queried only at its default loopback health endpoint. Authentication, MCP readiness, models, execution, and generated websites are not asserted.
+- M01 audit and Checkpoint acceptance remain pending; these implementation decisions do not advance the release checkpoint or authorize M02.
