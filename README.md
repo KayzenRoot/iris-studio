@@ -28,6 +28,8 @@ npm run build
 npm test
 npm run gef:doctor
 npm run gef:status
+npm audit --omit=dev --audit-level=high
+npm run audit:policy
 ```
 
 Use the repository script for Playwright installation so the lockfile-backed Playwright package is used consistently with CI.

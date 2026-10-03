@@ -1,0 +1,24 @@
+{
+  "exceptionId": "IRIS-STUDIO-SEC-0001",
+  "generatedAt": "2026-10-03T03:49:44.923Z",
+  "result": "PASS",
+  "evidenceDirectory": ".engineering/evidence/IRIS-STUDIO-SEC-0001/runs/2026-10-03T03-49-39-630Z",
+  "allowedFindingCount": 4,
+  "fullAuditCounts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 4,
+    "critical": 0,
+    "total": 4
+  },
+  "productionAuditCounts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "errors": []
+}

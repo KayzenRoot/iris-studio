@@ -59,5 +59,8 @@ jobs:
           npm run build
           npm test
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Enforce governed dependency audit policy
+        run: npm run audit:policy

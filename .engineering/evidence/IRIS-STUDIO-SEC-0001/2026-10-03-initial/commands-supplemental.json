@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-03",
+  "commands": [
+    {
+      "command": "npm explain braces",
+      "exitCode": 0,
+      "stdout": "npm-explain-braces.txt",
+      "stderr": "npm-explain-braces.stderr.txt",
+      "purpose": "Confirmar o caminho transitivo completo desde a dependência dev direta."
+    }
+  ]
+}

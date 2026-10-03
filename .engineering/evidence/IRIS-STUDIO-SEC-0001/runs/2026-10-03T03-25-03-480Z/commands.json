@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-10-03T03:25:09.881Z",
+  "commands": [
+    {
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "error": null,
+      "stdout": "npm-audit-full.json.stdout",
+      "stderr": "npm-audit-full.json.stderr.txt"
+    },
+    {
+      "command": "npm audit --omit=dev --json --audit-level=critical",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "npm-audit-production.json.stdout",
+      "stderr": "npm-audit-production.json.stderr.txt"
+    },
+    {
+      "command": "npm audit --omit=dev --audit-level=high",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "npm-audit-production-high.txt.stdout",
+      "stderr": "npm-audit-production-high.txt.stderr.txt"
+    }
+  ]
+}

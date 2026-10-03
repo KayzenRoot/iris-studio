@@ -40,3 +40,6 @@ WO-0001 approved no product architecture. Those decisions were deferred to MVP p
 - D-003-05: Playwright browser installation in documented validation uses the lockfile-backed repository script `npm run ci:install:playwright`, not a free-form `npx` fetch.
 
 M01 independent audit is **APPROVED**. PR #13 was squash-merged as `b85c6f22be21c74d878379570dd426a243483a1c`. The canonical checkpoint authorizes M02 / IRIS-STUDIO-WO-0004 as the next legal increment.
+
+## IRIS-STUDIO-WO-0004 — governed dependency exception
+- D-SEC-0001-01 (2026-10-03): By explicit user instruction, record temporary exception `IRIS-STUDIO-SEC-0001` for only `GHSA-VFJ7-8CJW-P6XM` / `CVE-2026-93687`. The four High npm audit entries are confined to the recorded dev-only Next ESLint tooling path, the production-only audit has zero findings, and the official advisory lists no patched `braces` release. Do not downgrade the Next 16 toolchain to accept npm's incompatible major fix. Require `npm run audit:policy` plus the production-only audit; expire for review by 2026-10-17 and remove immediately once an official compatible fix is available. This temporary exception does not waive the MVP Definition of Done requirement to close known High/Critical findings.
