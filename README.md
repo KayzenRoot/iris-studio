@@ -21,7 +21,7 @@ The System Health page reports only local checks: database/migration access, Cod
 
 ```powershell
 npm run check:baseline
-npx playwright install chromium
+npm run ci:install:playwright
 npm run lint
 npm run typecheck
 npm run build
@@ -29,6 +29,8 @@ npm test
 npm run gef:doctor
 npm run gef:status
 ```
+
+Use the repository script for Playwright installation rather than a free-form `npx` invocation so the locally locked Playwright package is used consistently with CI.
 
 ## Canonical sources
 Start at [.engineering/README.md](.engineering/README.md). Modules: [.engineering/MODULES.md](.engineering/MODULES.md). Executable module Work Orders: [.engineering/work-orders/](.engineering/work-orders/).
