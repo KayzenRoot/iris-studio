@@ -16,6 +16,7 @@
     "test:unit": "vitest run tests/unit",
     "test:e2e": "node scripts/run-e2e.mjs",
     "test": "npm run test:unit && npm run test:e2e",
+    "ci:install:playwright": "playwright install --with-deps chromium",
     "check:baseline": "node scripts/check-baseline.mjs",
     "gef:doctor": "gef doctor",
     "gef:status": "gef status"
