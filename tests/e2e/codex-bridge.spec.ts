@@ -70,5 +70,5 @@ test("mostra o painel Codex local e bloqueia campos de chave arbitrários", asyn
   expect(rejected.status).toBe(400);
   expect(rejected.body).not.toContain("sk-never-accept-this");
 
-  await page.screenshot({ path: ".engineering/evidence/IRIS-STUDIO-WO-0004-codex-bridge.png", fullPage: true });
+  await page.screenshot({ path: ".engineering/evidence/IRIS-STUDIO-WO-0005-codex-bridge.png", fullPage: true });
 });

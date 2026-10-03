@@ -5,8 +5,14 @@ import { openIrisStore, type IrisStore } from "./db/store";
 import { CodexAdapter } from "./codex/adapter";
 import { CodexExecutionService } from "./codex/service";
 import type { CodexExecutionService as CodexExecutionServiceType } from "./codex/service";
+import { ArtDirectorService } from "./art-director/service";
+import type { ArtDirectorService as ArtDirectorServiceType } from "./art-director/service";
 
-const irisGlobal = globalThis as typeof globalThis & { __irisStore?: IrisStore; __irisCodexService?: CodexExecutionServiceType };
+const irisGlobal = globalThis as typeof globalThis & {
+  __irisStore?: IrisStore;
+  __irisCodexService?: CodexExecutionServiceType;
+  __irisArtDirectorService?: ArtDirectorServiceType;
+};
 
 export function getAppStore() {
   if (!irisGlobal.__irisStore) {
@@ -33,6 +39,19 @@ export function getCodexService() {
     });
   }
   return irisGlobal.__irisCodexService;
+}
+
+export function getArtDirectorService() {
+  if (!irisGlobal.__irisArtDirectorService) {
+    const config = getAppConfig();
+    irisGlobal.__irisArtDirectorService = new ArtDirectorService({
+      store: getAppStore(),
+      codex: getCodexService(),
+      projectsDirectory: config.projectsDirectory,
+      repositoryRoot: process.cwd(),
+    });
+  }
+  return irisGlobal.__irisArtDirectorService;
 }
 
 export interface SystemHealth {

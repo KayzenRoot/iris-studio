@@ -9,13 +9,49 @@ import { assertOutsideSourceRepository, resolveProjectWorkspacePath, samePath } 
 export const projectBriefSchema = z.object({
   siteType: z.enum(["marketing", "portfolio", "institutional", "product-presentation"]),
   description: z.string().trim().min(10).max(2000),
+  goal: z.string().trim().min(10).max(500).default("Não informado; confirme o objetivo primário."),
+  audience: z.string().trim().min(10).max(500).default("Não informada; confirme o público primário."),
   pages: z.array(z.string().trim().min(1).max(80)).min(1).max(8),
+  requiredSections: z.array(z.object({
+    page: z.string().trim().min(1).max(80),
+    sections: z.array(z.string().trim().min(1).max(80)).min(1).max(12),
+  }).strict()).max(8).default([]),
   references: z.array(z.string().trim().min(1).max(500)).max(12),
   tone: z.string().trim().min(2).max(240),
   colors: z.array(z.string().regex(/^#[\da-fA-F]{6}$/)).min(1).max(8),
   mediaDirection: z.string().trim().min(2).max(500),
+  mediaPreference: z.enum(["DIRECTOR_CHOICE", "2D_ONLY", "2D_AND_3D_ALLOWED"]).default("DIRECTOR_CHOICE"),
   motionDirection: z.string().trim().min(2).max(500),
   qualityMode: z.enum(["STANDARD", "PREMIUM", "ABSURD"]),
+}).superRefine((brief, context) => {
+  const normalize = (value: string) => value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
+  const pages = new Set<string>();
+  brief.pages.forEach((item, index) => {
+    const page = normalize(item);
+    if (pages.has(page)) {
+      context.addIssue({ code: "custom", path: ["pages", index], message: "Cada página deve aparecer uma única vez." });
+    }
+    pages.add(page);
+  });
+  const seenPages = new Set<string>();
+  brief.requiredSections.forEach((item, index) => {
+    const page = normalize(item.page);
+    if (!pages.has(page)) {
+      context.addIssue({ code: "custom", path: ["requiredSections", index, "page"], message: "A página deve estar na lista de páginas desejadas." });
+    }
+    if (seenPages.has(page)) {
+      context.addIssue({ code: "custom", path: ["requiredSections", index, "page"], message: "Use uma única linha de seções obrigatórias por página." });
+    }
+    seenPages.add(page);
+    const sections = new Set<string>();
+    item.sections.forEach((section, sectionIndex) => {
+      const name = normalize(section);
+      if (sections.has(name)) {
+        context.addIssue({ code: "custom", path: ["requiredSections", index, "sections", sectionIndex], message: "Cada seção obrigatória deve aparecer uma única vez." });
+      }
+      sections.add(name);
+    });
+  });
 });
 
 export const createProjectSchema = z.object({
@@ -72,6 +108,52 @@ export interface CodexRunUpdate {
   finishedAt?: string | null;
 }
 
+export type ArtDirectionRevisionStatus = "GENERATING" | "DRAFT" | "APPROVED" | "FAILED";
+
+export interface ArtDirectionRevisionRecord {
+  id: string;
+  projectId: string;
+  revision: number;
+  parentRevisionId: string | null;
+  status: ArtDirectionRevisionStatus;
+  promptVersion: string;
+  schemaVersion: 1;
+  qualityMode: ProjectBrief["qualityMode"];
+  attemptsUsed: 1 | 2;
+  codexRunId: string | null;
+  briefFileName: string | null;
+  contractFileName: string | null;
+  outputFileName: string | null;
+  snapshotJson: string | null;
+  errorCode: string | null;
+  createdAt: string;
+  updatedAt: string;
+  finishedAt: string | null;
+  approvedAt: string | null;
+}
+
+export interface ArtDirectionRevisionUpdate {
+  status?: ArtDirectionRevisionStatus;
+  attemptsUsed?: 1 | 2;
+  codexRunId?: string | null;
+  briefFileName?: string | null;
+  contractFileName?: string | null;
+  outputFileName?: string | null;
+  snapshotJson?: string | null;
+  errorCode?: string | null;
+  finishedAt?: string | null;
+  approvedAt?: string | null;
+}
+
+export interface ArtDirectionApprovalRecord {
+  id: string;
+  projectId: string;
+  revisionId: string;
+  revision: number;
+  snapshotJson: string;
+  approvedAt: string;
+}
+
 export interface IrisStoreOptions {
   databasePath: string;
   projectsDirectory: string;
@@ -88,6 +170,18 @@ export interface IrisStore {
   getCodexRun(projectId: string, id: string): CodexRunRecord | null;
   listCodexRuns(projectId: string): CodexRunRecord[];
   updateCodexRun(id: string, update: CodexRunUpdate): CodexRunRecord | null;
+  createArtDirectionRevision(input: {
+    projectId: string;
+    parentRevisionId: string | null;
+    promptVersion: string;
+    schemaVersion: 1;
+    qualityMode: ProjectBrief["qualityMode"];
+  }): ArtDirectionRevisionRecord;
+  getArtDirectionRevision(projectId: string, id: string): ArtDirectionRevisionRecord | null;
+  listArtDirectionRevisions(projectId: string): ArtDirectionRevisionRecord[];
+  updateArtDirectionRevision(id: string, update: ArtDirectionRevisionUpdate): ArtDirectionRevisionRecord | null;
+  approveArtDirectionRevision(projectId: string, id: string): ArtDirectionApprovalRecord;
+  getArtDirectionApproval(projectId: string): ArtDirectionApprovalRecord | null;
 }
 
 function readMigrations(directory: string) {
@@ -162,6 +256,43 @@ function mapCodexRun(row: Record<string, unknown> | undefined): CodexRunRecord |
     startedAt: String(row.started_at),
     finishedAt: row.finished_at === null ? null : String(row.finished_at),
     updatedAt: String(row.updated_at),
+  };
+}
+
+function mapArtDirectionRevision(row: Record<string, unknown> | undefined): ArtDirectionRevisionRecord | null {
+  if (!row) return null;
+  return {
+    id: String(row.id),
+    projectId: String(row.project_id),
+    revision: Number(row.revision),
+    parentRevisionId: row.parent_revision_id === null ? null : String(row.parent_revision_id),
+    status: String(row.status) as ArtDirectionRevisionStatus,
+    promptVersion: String(row.prompt_version),
+    schemaVersion: Number(row.schema_version) as 1,
+    qualityMode: String(row.quality_mode) as ProjectBrief["qualityMode"],
+    attemptsUsed: Number(row.attempts_used) as 1 | 2,
+    codexRunId: row.codex_run_id === null ? null : String(row.codex_run_id),
+    briefFileName: row.brief_file_name === null ? null : String(row.brief_file_name),
+    contractFileName: row.contract_file_name === null ? null : String(row.contract_file_name),
+    outputFileName: row.output_file_name === null ? null : String(row.output_file_name),
+    snapshotJson: row.snapshot_json === null ? null : String(row.snapshot_json),
+    errorCode: row.error_code === null ? null : String(row.error_code),
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+    finishedAt: row.finished_at === null ? null : String(row.finished_at),
+    approvedAt: row.approved_at === null ? null : String(row.approved_at),
+  };
+}
+
+function mapArtDirectionApproval(row: Record<string, unknown> | undefined): ArtDirectionApprovalRecord | null {
+  if (!row) return null;
+  return {
+    id: String(row.id),
+    projectId: String(row.project_id),
+    revisionId: String(row.revision_id),
+    revision: Number(row.revision),
+    snapshotJson: String(row.snapshot_json),
+    approvedAt: String(row.approved_at),
   };
 }
 
@@ -339,6 +470,143 @@ export function openIrisStore(options: IrisStoreOptions): IrisStore {
       });
       transaction.immediate();
       return mapCodexRun(codexRunSelect.get(id) as Record<string, unknown> | undefined);
+    },
+    createArtDirectionRevision(input) {
+      if (!z.uuid().safeParse(input.projectId).success) throw new Error("Projeto inválido para direção de arte.");
+      const project = mapProject(selectProject.get(input.projectId) as Record<string, unknown> | undefined);
+      if (!project) throw new Error("Projeto não encontrado para direção de arte.");
+      const id = randomUUID();
+      const now = new Date().toISOString();
+      const insert = database.transaction(() => {
+        if (input.parentRevisionId) {
+          const parent = database.prepare("SELECT id FROM art_direction_revisions WHERE project_id = ? AND id = ?")
+            .get(input.projectId, input.parentRevisionId);
+          if (!parent) throw new Error("A revisão de origem não pertence ao projeto.");
+        }
+        const current = database.prepare("SELECT COALESCE(MAX(revision), 0) AS revision FROM art_direction_revisions WHERE project_id = ?")
+          .get(input.projectId) as { revision: number };
+        const revision = Number(current.revision) + 1;
+        const prefix = "iris-art-director-" + id;
+        database.prepare(
+          "INSERT INTO art_direction_revisions (" +
+          "id, project_id, revision, parent_revision_id, status, prompt_version, schema_version, " +
+          "quality_mode, attempts_used, brief_file_name, contract_file_name, output_file_name, created_at, updated_at" +
+          ") VALUES (?, ?, ?, ?, 'GENERATING', ?, ?, ?, 1, ?, ?, ?, ?, ?)",
+        ).run(
+          id,
+          input.projectId,
+          revision,
+          input.parentRevisionId,
+          input.promptVersion,
+          input.schemaVersion,
+          input.qualityMode,
+          prefix + "-brief.json",
+          prefix + "-contract.json",
+          prefix + "-attempt-1.json",
+          now,
+          now,
+        );
+      });
+      insert.immediate();
+      return mapArtDirectionRevision(database.prepare("SELECT * FROM art_direction_revisions WHERE id = ?")
+        .get(id) as Record<string, unknown> | undefined)!;
+    },
+    getArtDirectionRevision(projectId, id) {
+      if (!z.uuid().safeParse(projectId).success || !z.uuid().safeParse(id).success) return null;
+      const row = database.prepare("SELECT * FROM art_direction_revisions WHERE project_id = ? AND id = ?")
+        .get(projectId, id) as Record<string, unknown> | undefined;
+      return mapArtDirectionRevision(row);
+    },
+    listArtDirectionRevisions(projectId) {
+      if (!z.uuid().safeParse(projectId).success) return [];
+      const rows = database.prepare(
+        "SELECT * FROM art_direction_revisions WHERE project_id = ? " +
+        "ORDER BY revision DESC LIMIT 100",
+      ).all(projectId) as Record<string, unknown>[];
+      return rows.map((row) => mapArtDirectionRevision(row))
+        .filter((revision): revision is ArtDirectionRevisionRecord => revision !== null);
+    },
+    updateArtDirectionRevision(id, update) {
+      if (!z.uuid().safeParse(id).success) return null;
+      const current = mapArtDirectionRevision(database.prepare("SELECT * FROM art_direction_revisions WHERE id = ?")
+        .get(id) as Record<string, unknown> | undefined);
+      if (!current) return null;
+      if (current.status === "APPROVED") throw new Error("Revisões aprovadas são imutáveis.");
+      const prefix = "iris-art-director-" + id;
+      if (update.briefFileName !== undefined && update.briefFileName !== null && update.briefFileName !== prefix + "-brief.json") {
+        throw new Error("Nome de arquivo de briefing inválido.");
+      }
+      if (update.contractFileName !== undefined && update.contractFileName !== null && update.contractFileName !== prefix + "-contract.json") {
+        throw new Error("Nome de arquivo de contrato inválido.");
+      }
+      if (update.outputFileName !== undefined && update.outputFileName !== null
+        && ![prefix + "-attempt-1.json", prefix + "-attempt-2.json"].includes(update.outputFileName)) {
+        throw new Error("Nome de arquivo de resultado inválido.");
+      }
+      const patch = { ...current, ...update, updatedAt: new Date().toISOString() };
+      database.prepare(
+        "UPDATE art_direction_revisions SET status = ?, attempts_used = ?, codex_run_id = ?, " +
+        "brief_file_name = ?, contract_file_name = ?, output_file_name = ?, snapshot_json = ?, " +
+        "error_code = ?, updated_at = ?, finished_at = ?, approved_at = ? WHERE id = ?",
+      ).run(
+        patch.status,
+        patch.attemptsUsed,
+        patch.codexRunId,
+        patch.briefFileName,
+        patch.contractFileName,
+        patch.outputFileName,
+        patch.snapshotJson,
+        patch.errorCode,
+        patch.updatedAt,
+        patch.finishedAt,
+        patch.approvedAt,
+        id,
+      );
+      return mapArtDirectionRevision(database.prepare("SELECT * FROM art_direction_revisions WHERE id = ?")
+        .get(id) as Record<string, unknown> | undefined);
+    },
+    approveArtDirectionRevision(projectId, id) {
+      if (!z.uuid().safeParse(projectId).success || !z.uuid().safeParse(id).success) {
+        throw new Error("Revisão de direção de arte inválida.");
+      }
+      const approvalId = randomUUID();
+      const approvedAt = new Date().toISOString();
+      const approve = database.transaction(() => {
+        const revision = mapArtDirectionRevision(database.prepare("SELECT * FROM art_direction_revisions WHERE project_id = ? AND id = ?")
+          .get(projectId, id) as Record<string, unknown> | undefined);
+        if (!revision) throw new Error("Revisão de direção de arte não encontrada.");
+        if (revision.status !== "DRAFT" || !revision.snapshotJson) {
+          throw new Error("Somente uma revisão DRAFT validada pode ser aprovada.");
+        }
+        database.prepare(
+          "UPDATE art_direction_revisions SET status = 'APPROVED', approved_at = ?, updated_at = ? " +
+          "WHERE project_id = ? AND id = ? AND status = 'DRAFT'",
+        ).run(approvedAt, approvedAt, projectId, id);
+        database.prepare(
+          "INSERT INTO art_direction_approvals (id, project_id, revision_id, snapshot_json, approved_at) " +
+          "VALUES (?, ?, ?, ?, ?)",
+        ).run(approvalId, projectId, id, revision.snapshotJson, approvedAt);
+      });
+      approve.immediate();
+      const approval = mapArtDirectionApproval(database.prepare(
+        "SELECT approvals.*, revisions.revision FROM art_direction_approvals AS approvals " +
+        "JOIN art_direction_revisions AS revisions " +
+        "ON revisions.project_id = approvals.project_id AND revisions.id = approvals.revision_id " +
+        "WHERE approvals.id = ?",
+      ).get(approvalId) as Record<string, unknown> | undefined);
+      if (!approval) throw new Error("A referência imutável de aprovação não pôde ser reaberta.");
+      return approval;
+    },
+    getArtDirectionApproval(projectId) {
+      if (!z.uuid().safeParse(projectId).success) return null;
+      const row = database.prepare(
+        "SELECT approvals.*, revisions.revision FROM art_direction_approvals AS approvals " +
+        "JOIN art_direction_revisions AS revisions " +
+        "ON revisions.project_id = approvals.project_id AND revisions.id = approvals.revision_id " +
+        "WHERE approvals.project_id = ? " +
+        "ORDER BY approvals.approved_at DESC, revisions.revision DESC LIMIT 1",
+      ).get(projectId) as Record<string, unknown> | undefined;
+      return mapArtDirectionApproval(row);
     },
   };
 }
