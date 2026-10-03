@@ -1,58 +1,10 @@
 import { createHash } from "node:crypto";
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { mkdtempSync, readdirSync, rmSync } from "node:fs";
-import { createServer } from "node:net";
 import { homedir } from "node:os";
-import { join } from "node:path";
-
-async function reserveLoopbackPort() {
-  const server = createServer();
-  await new Promise((resolveListen, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolveListen);
-  });
-  const address = server.address();
-  if (!address || typeof address === "string") throw new Error("Não foi possível reservar uma porta local.");
-  await new Promise((resolveClose, reject) => server.close((error) => error ? reject(error) : resolveClose()));
-  return address.port;
-}
-
-async function waitForHealth(baseUrl, child) {
-  for (let attempt = 0; attempt < 80; attempt += 1) {
-    if (child.exitCode !== null) throw new Error(`Servidor local encerrou com código ${child.exitCode}.`);
-    try {
-      const response = await fetch(`${baseUrl}/api/health`, { signal: AbortSignal.timeout(2000) });
-      if (response.ok) return await response.json();
-    } catch {
-      // O servidor de produção pode levar alguns segundos para ficar pronto.
-    }
-    await new Promise((resolveDelay) => setTimeout(resolveDelay, 250));
-  }
-  throw new Error("O servidor local não ficou pronto a tempo.");
-}
-
-async function stopServer(child) {
-  if (child.exitCode !== null) return;
-  const stopped = new Promise((resolveExit) => child.once("exit", resolveExit));
-  child.kill("SIGTERM");
-  const exited = await Promise.race([stopped.then(() => true), new Promise((resolveDelay) => setTimeout(() => resolveDelay(false), 8000))]);
-  if (exited) return;
-  if (process.platform === "win32" && Number.isSafeInteger(child.pid)) {
-    const taskkill = join(process.env.SystemRoot ?? "C:\\Windows", "System32", "taskkill.exe");
-    spawnSync(taskkill, ["/PID", String(child.pid), "/T", "/F"], { shell: false, windowsHide: true, stdio: "ignore", timeout: 5000 });
-  } else {
-    child.kill("SIGKILL");
-  }
-}
-
-async function postJson(url, origin, body) {
-  return fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json", origin },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(10_000),
-  });
-}
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import { postJson, reserveLoopbackPort, stopServer, waitForHealth } from "./run-codex-smoke.mjs";
 
 function safeCode(value) {
   return typeof value === "string" && /^[A-Z0-9_]{2,64}$/.test(value) ? value : "UNKNOWN";
@@ -170,7 +122,8 @@ async function main() {
       qualityMode: revision.qualityMode,
       pageCount: output.siteBlueprint.pages.length,
       antiGenericConstraintCount: output.visualDNA.antiGenericConstraints.length,
-      mediaStrategies: [...new Set(output.siteBlueprint.pages.flatMap((page) => page.sections.map((section) => section.media.strategy)))].sort(),
+      mediaStrategies: [...new Set(output.siteBlueprint.pages.flatMap((page) => page.sections.map((section) => section.media.strategy)))]
+        .sort((left, right) => left.localeCompare(right, "en")),
       approvedSnapshotSha256: createHash("sha256").update(revision.canonicalSnapshot).digest("hex"),
       approvalReopenedUnchanged: true,
       temporaryWorkspaceFiles: 0,
@@ -183,7 +136,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(JSON.stringify({ result: "FAIL", reason: error instanceof Error ? error.message : "falha desconhecida" }));
-  process.exitCode = 1;
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  main().catch((error) => {
+    console.error(JSON.stringify({ result: "FAIL", reason: error instanceof Error ? error.message : "falha desconhecida" }));
+    process.exitCode = 1;
+  });
+}
