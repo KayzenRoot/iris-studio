@@ -203,7 +203,7 @@ describe("Codex CLI adapter", () => {
     await handle.cancel();
     child.emit("close", null, "SIGTERM");
     expect(spawnSyncProcess).toHaveBeenCalledWith(
-      expect.stringMatching(/\\System32\\taskkill\.exe$/i),
+      expect.stringMatching(/[\\/]System32[\\/]taskkill\.exe$/i),
       ["/PID", "508", "/T", "/F"],
       expect.objectContaining({ shell: false, timeout: 5000 }),
     );

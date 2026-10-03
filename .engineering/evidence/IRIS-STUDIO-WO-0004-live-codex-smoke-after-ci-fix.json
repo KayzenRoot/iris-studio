@@ -1,0 +1,16 @@
+{
+  "workOrder": "IRIS-STUDIO-WO-0004",
+  "command": "npm run test:codex",
+  "observedAt": "2026-10-03T04:16:12.718Z",
+  "exitCode": 0,
+  "result": "PASS",
+  "codexStatus": "READY",
+  "cliVersion": "0.160.0",
+  "runId": "fab6ec59-7b15-4204-a9d2-63770badcb20",
+  "runStatus": "SUCCEEDED",
+  "markerVerified": true,
+  "workspaceFiles": 1,
+  "resultFileVersion": 1,
+  "credentialsOrAccountOutputRetained": false,
+  "scope": "workspace temporario descartavel; somente IRIS-CODEX-SMOKE.txt foi criado; a arvore temporaria foi removida"
+}
