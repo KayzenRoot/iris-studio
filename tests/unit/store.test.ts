@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import Database from "better-sqlite3";
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, rmSync, symlinkSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { openIrisStore } from "../../src/server/db/store";
-import { resolveProjectWorkspacePath } from "../../src/server/workspaces/paths";
+import { assertWorkspaceTreeSafe, resolveProjectWorkspacePath } from "../../src/server/workspaces/paths";
 
 const temporaryDirectories: string[] = [];
 
@@ -14,9 +15,18 @@ function makeTemporaryDirectory() {
   return directory;
 }
 
+function removeTemporaryDirectory(directory: string) {
+  if (!existsSync(directory)) return;
+  for (const entry of readdirSync(directory)) {
+    const child = join(directory, entry);
+    if (lstatSync(child).isSymbolicLink()) unlinkSync(child);
+  }
+  rmSync(directory, { recursive: true, force: true });
+}
+
 afterEach(() => {
   for (const directory of temporaryDirectories.splice(0)) {
-    rmSync(directory, { recursive: true, force: true });
+    removeTemporaryDirectory(directory);
   }
 });
 
@@ -111,5 +121,46 @@ describe("local project persistence", () => {
         repositoryRoot,
       }),
     ).toThrow(/fora do source repository/i);
+  });
+
+  it("rejects a project workspace that is a symlink or junction inside the projects root", () => {
+    const root = makeTemporaryDirectory();
+    const projectsDirectory = join(root, "projects");
+    const projectId = "f1f15a5c-03bb-426e-88da-f0e536b9d598";
+    const targetDirectory = join(projectsDirectory, "other-project");
+    mkdirSync(targetDirectory, { recursive: true });
+    symlinkSync(targetDirectory, join(projectsDirectory, projectId), process.platform === "win32" ? "junction" : "dir");
+
+    expect(() => resolveProjectWorkspacePath(projectsDirectory, projectId)).toThrow(/symlink|junction/i);
+  });
+
+  it("rejects links anywhere below a canonical project workspace", () => {
+    const root = makeTemporaryDirectory();
+    const repositoryRoot = process.cwd();
+    const workspace = join(root, "projects", "project");
+    const outside = join(root, "outside");
+    mkdirSync(workspace, { recursive: true });
+    mkdirSync(outside);
+    symlinkSync(outside, join(workspace, "linked"), process.platform === "win32" ? "junction" : "dir");
+
+    expect(() => assertWorkspaceTreeSafe(workspace, repositoryRoot)).toThrow(/symlink|junction|escapa|WORKSPACE_ENTRY_ESCAPE/i);
+  });
+
+  it("creates the versioned Codex run table during the next ordered migration", () => {
+    const root = makeTemporaryDirectory();
+    const databasePath = join(root, "user-data", "iris-studio.sqlite");
+    const store = openIrisStore({
+      databasePath,
+      projectsDirectory: join(root, "user-data", "projects"),
+      repositoryRoot: process.cwd(),
+    });
+    const database = new Database(databasePath);
+    try {
+      const table = database.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'codex_runs'").get();
+      expect(table).toBeDefined();
+    } finally {
+      database.close();
+      store.close();
+    }
   });
 });

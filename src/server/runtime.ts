@@ -2,8 +2,11 @@ import { getAppConfig } from "./config";
 import { checkIntegrations, type IntegrationHealth } from "./health";
 import { logEvent } from "./logger";
 import { openIrisStore, type IrisStore } from "./db/store";
+import { CodexAdapter } from "./codex/adapter";
+import { CodexExecutionService } from "./codex/service";
+import type { CodexExecutionService as CodexExecutionServiceType } from "./codex/service";
 
-const irisGlobal = globalThis as typeof globalThis & { __irisStore?: IrisStore };
+const irisGlobal = globalThis as typeof globalThis & { __irisStore?: IrisStore; __irisCodexService?: CodexExecutionServiceType };
 
 export function getAppStore() {
   if (!irisGlobal.__irisStore) {
@@ -16,6 +19,20 @@ export function getAppStore() {
     logEvent("info", "local_store_ready");
   }
   return irisGlobal.__irisStore;
+}
+
+export function getCodexService() {
+  if (!irisGlobal.__irisCodexService) {
+    const config = getAppConfig();
+    irisGlobal.__irisCodexService = new CodexExecutionService({
+      store: getAppStore(),
+      projectsDirectory: config.projectsDirectory,
+      repositoryRoot: process.cwd(),
+      dataDirectory: config.dataDirectory,
+      adapter: new CodexAdapter(),
+    });
+  }
+  return irisGlobal.__irisCodexService;
 }
 
 export interface SystemHealth {

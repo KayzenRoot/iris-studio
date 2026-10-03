@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync } from "nod
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { z } from "zod";
 
-import { assertOutsideSourceRepository, resolveProjectWorkspacePath } from "../workspaces/paths";
+import { assertOutsideSourceRepository, resolveProjectWorkspacePath, samePath } from "../workspaces/paths";
 
 export const projectBriefSchema = z.object({
   siteType: z.enum(["marketing", "portfolio", "institutional", "product-presentation"]),
@@ -36,6 +36,42 @@ export interface ProjectRecord {
   brief: ProjectBrief;
 }
 
+export type CodexRunStatus = "RUNNING" | "CANCELLING" | "SUCCEEDED" | "FAILED" | "CANCELLED" | "TIMED_OUT" | "INTERRUPTED";
+export type CodexRetryClass = "NONE" | "TRANSIENT" | "USER_ACTION" | "MANUAL_REVIEW";
+
+export interface CodexRunRecord {
+  id: string;
+  generationRunId: string;
+  projectId: string;
+  workspacePath: string;
+  schemaVersion: 1;
+  status: CodexRunStatus;
+  cliVersion: string;
+  exitCode: number | null;
+  retryClass: CodexRetryClass;
+  errorCode: string | null;
+  stdoutLog: string;
+  stderrLog: string;
+  resultJson: string | null;
+  resultPath: string | null;
+  createdAt: string;
+  startedAt: string;
+  finishedAt: string | null;
+  updatedAt: string;
+}
+
+export interface CodexRunUpdate {
+  status?: CodexRunStatus;
+  exitCode?: number | null;
+  retryClass?: CodexRetryClass;
+  errorCode?: string | null;
+  stdoutLog?: string;
+  stderrLog?: string;
+  resultJson?: string | null;
+  resultPath?: string | null;
+  finishedAt?: string | null;
+}
+
 export interface IrisStoreOptions {
   databasePath: string;
   projectsDirectory: string;
@@ -48,6 +84,10 @@ export interface IrisStore {
   createProject(input: CreateProjectInput): ProjectRecord;
   getProject(id: string): ProjectRecord | null;
   listProjects(): ProjectRecord[];
+  createCodexRun(input: { projectId: string; workspacePath: string; cliVersion: string }): CodexRunRecord;
+  getCodexRun(projectId: string, id: string): CodexRunRecord | null;
+  listCodexRuns(projectId: string): CodexRunRecord[];
+  updateCodexRun(id: string, update: CodexRunUpdate): CodexRunRecord | null;
 }
 
 function readMigrations(directory: string) {
@@ -101,6 +141,37 @@ function mapProject(row: Record<string, unknown> | undefined): ProjectRecord | n
   };
 }
 
+function mapCodexRun(row: Record<string, unknown> | undefined): CodexRunRecord | null {
+  if (!row) return null;
+  return {
+    id: String(row.id),
+    generationRunId: String(row.generation_run_id),
+    projectId: String(row.project_id),
+    workspacePath: String(row.workspace_path),
+    schemaVersion: Number(row.schema_version) as 1,
+    status: String(row.status) as CodexRunStatus,
+    cliVersion: String(row.cli_version),
+    exitCode: row.exit_code === null ? null : Number(row.exit_code),
+    retryClass: String(row.retry_class) as CodexRetryClass,
+    errorCode: row.error_code === null ? null : String(row.error_code),
+    stdoutLog: String(row.stdout_log),
+    stderrLog: String(row.stderr_log),
+    resultJson: row.result_json === null ? null : String(row.result_json),
+    resultPath: row.result_path === null ? null : String(row.result_path),
+    createdAt: String(row.created_at),
+    startedAt: String(row.started_at),
+    finishedAt: row.finished_at === null ? null : String(row.finished_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
+function genericRunStatus(status: CodexRunStatus) {
+  if (status === "SUCCEEDED") return { run: "SUCCEEDED", job: "SUCCEEDED", progress: 1 } as const;
+  if (status === "CANCELLED") return { run: "CANCELLED", job: "CANCELLED", progress: 0 } as const;
+  if (status === "RUNNING" || status === "CANCELLING") return { run: "RUNNING", job: "RUNNING", progress: 0.5 } as const;
+  return { run: "FAILED", job: "FAILED", progress: 0 } as const;
+}
+
 export function openIrisStore(options: IrisStoreOptions): IrisStore {
   if (![options.databasePath, options.projectsDirectory, options.repositoryRoot].every(isAbsolute)) {
     throw new Error("Database, projects directory e source repository devem usar caminhos absolutos.");
@@ -139,6 +210,22 @@ export function openIrisStore(options: IrisStoreOptions): IrisStore {
     JOIN project_specs ON project_specs.project_id = projects.id
     WHERE projects.id = ?
   `);
+  database.prepare(`
+    UPDATE codex_runs SET status = 'INTERRUPTED', error_code = 'PROCESS_RESTARTED',
+      retry_class = 'MANUAL_REVIEW', updated_at = ?
+    WHERE status IN ('RUNNING', 'CANCELLING')
+  `).run(new Date().toISOString());
+  database.prepare(`
+    UPDATE generation_runs SET status = 'FAILED', updated_at = ?
+    WHERE id IN (SELECT generation_run_id FROM codex_runs WHERE status = 'INTERRUPTED')
+      AND status = 'RUNNING'
+  `).run(new Date().toISOString());
+  database.prepare(`
+    UPDATE jobs SET status = 'FAILED', updated_at = ?
+    WHERE generation_run_id IN (SELECT generation_run_id FROM codex_runs WHERE status = 'INTERRUPTED')
+      AND status = 'RUNNING'
+  `).run(new Date().toISOString());
+  const codexRunSelect = database.prepare("SELECT * FROM codex_runs WHERE id = ?");
 
   return {
     close() {
@@ -187,6 +274,71 @@ export function openIrisStore(options: IrisStoreOptions): IrisStore {
         ORDER BY projects.updated_at DESC, projects.created_at DESC
       `).all() as Record<string, unknown>[];
       return rows.map((row) => mapProject(row)).filter((project): project is ProjectRecord => project !== null);
+    },
+    createCodexRun(input) {
+      if (!z.uuid().safeParse(input.projectId).success) throw new Error("Projeto inválido para execução Codex.");
+      const project = mapProject(selectProject.get(input.projectId) as Record<string, unknown> | undefined);
+      if (!project) throw new Error("Projeto não encontrado para execução Codex.");
+      if (!samePath(input.workspacePath, project.workspacePath)) throw new Error("Workspace não corresponde ao projeto selecionado.");
+      const id = randomUUID();
+      const generationRunId = randomUUID();
+      const jobId = randomUUID();
+      const now = new Date().toISOString();
+      const insert = database.transaction(() => {
+        database.prepare(`
+          INSERT INTO generation_runs (id, project_id, status, created_at, updated_at)
+          VALUES (?, ?, 'RUNNING', ?, ?)
+        `).run(generationRunId, project.id, now, now);
+        database.prepare(`
+          INSERT INTO jobs (id, generation_run_id, kind, status, progress, created_at, updated_at)
+          VALUES (?, ?, 'CODEX_EXECUTION', 'RUNNING', 0.5, ?, ?)
+        `).run(jobId, generationRunId, now, now);
+        database.prepare(`
+          INSERT INTO codex_runs (id, generation_run_id, project_id, workspace_path, status, cli_version,
+            created_at, started_at, updated_at)
+          VALUES (?, ?, ?, ?, 'RUNNING', ?, ?, ?, ?)
+        `).run(id, generationRunId, project.id, resolve(input.workspacePath), input.cliVersion, now, now, now);
+      });
+      insert.immediate();
+      return mapCodexRun(codexRunSelect.get(id) as Record<string, unknown> | undefined)!;
+    },
+    getCodexRun(projectId, id) {
+      if (!z.uuid().safeParse(projectId).success || !z.uuid().safeParse(id).success) return null;
+      const row = database.prepare("SELECT * FROM codex_runs WHERE project_id = ? AND id = ?")
+        .get(projectId, id) as Record<string, unknown> | undefined;
+      return mapCodexRun(row);
+    },
+    listCodexRuns(projectId) {
+      if (!z.uuid().safeParse(projectId).success) return [];
+      const rows = database.prepare("SELECT * FROM codex_runs WHERE project_id = ? ORDER BY created_at DESC LIMIT 100")
+        .all(projectId) as Record<string, unknown>[];
+      return rows.map((row) => mapCodexRun(row)).filter((run): run is CodexRunRecord => run !== null);
+    },
+    updateCodexRun(id, update) {
+      if (!z.uuid().safeParse(id).success) return null;
+      const current = mapCodexRun(codexRunSelect.get(id) as Record<string, unknown> | undefined);
+      if (!current) return null;
+      const nextStatus = update.status ?? current.status;
+      const timestamp = new Date().toISOString();
+      const patch = {
+        ...current,
+        ...update,
+        updatedAt: timestamp,
+      };
+      const generic = genericRunStatus(nextStatus);
+      const transaction = database.transaction(() => {
+        database.prepare(`
+          UPDATE codex_runs SET status = ?, exit_code = ?, retry_class = ?, error_code = ?, stdout_log = ?,
+            stderr_log = ?, result_json = ?, result_path = ?, finished_at = ?, updated_at = ? WHERE id = ?
+        `).run(patch.status, patch.exitCode, patch.retryClass, patch.errorCode, patch.stdoutLog, patch.stderrLog,
+          patch.resultJson, patch.resultPath, patch.finishedAt, timestamp, id);
+        database.prepare("UPDATE generation_runs SET status = ?, updated_at = ? WHERE id = ?")
+          .run(generic.run, timestamp, current.generationRunId);
+        database.prepare("UPDATE jobs SET status = ?, progress = ?, updated_at = ? WHERE generation_run_id = ?")
+          .run(generic.job, generic.progress, timestamp, current.generationRunId);
+      });
+      transaction.immediate();
+      return mapCodexRun(codexRunSelect.get(id) as Record<string, unknown> | undefined);
     },
   };
 }
