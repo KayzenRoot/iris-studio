@@ -3,7 +3,7 @@
 IRIS Studio is a local-first application for orchestrating high-quality complete website creation with a dashboard, local ComfyUI, an IRIS-owned Blender MCP/3D engine and the user's locally authenticated Codex CLI.
 
 ## Current status
-Repository foundation and MVP planning are complete. **M01 / IRIS-STUDIO-WO-0003 — Local Core & Dashboard is APPROVED** in PR #13 pending merge of the final checkpoint/evidence commit. The next legal implementation increment after merge is **M02 / IRIS-STUDIO-WO-0004 — Codex Bridge**.
+Repository foundation and MVP planning are complete. **M01 / IRIS-STUDIO-WO-0003 — Local Core & Dashboard is APPROVED and merged** in PR #13. The next legal implementation increment is **M02 / IRIS-STUDIO-WO-0004 — Codex Bridge**.
 
 ## Local operation (M01)
 Use Node.js 24.19.0 and npm 11.17.0 as pinned in the repository:
