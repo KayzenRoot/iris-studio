@@ -27,11 +27,7 @@ export function makeGoldenArtDirection(brief: ProjectBrief): ArtDirectionOutput 
           : hero && brief.qualityMode === "STANDARD"
             ? "STILL_IMAGE"
             : "HTML_CSS";
-      const fallbackStrategy: MediaStrategy = strategy === "REALTIME_3D"
-        ? "SHADER_CANVAS"
-        : strategy === "SHORT_LOOP" || strategy === "STILL_IMAGE"
-          ? "HTML_CSS"
-          : "HTML_CSS";
+      const fallbackStrategy: MediaStrategy = strategy === "REALTIME_3D" ? "SHADER_CANVAS" : "HTML_CSS";
       const loadTiming: LoadTiming = strategy === "REALTIME_3D" || strategy === "SHORT_LOOP" ? "ON_INTERACTION" : "INITIAL";
       const estimatedPayloadKB = strategy === "REALTIME_3D" ? 1800 : strategy === "SHORT_LOOP" ? 1200 : strategy === "STILL_IMAGE" ? 460 : 0;
       const runtimeCost: RuntimeCost = strategy === "REALTIME_3D" ? "HIGH" : strategy === "SHORT_LOOP" ? "MEDIUM" : "LOW";
