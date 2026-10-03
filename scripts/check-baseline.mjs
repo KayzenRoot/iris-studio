@@ -22,6 +22,9 @@ const requiredFiles = [
   ".engineering/SCOPE.md",
   ".engineering/ARCHITECTURE.md",
   ".engineering/SECURITY.md",
+  ".engineering/security-exceptions/README.md",
+  ".engineering/security-exceptions/IRIS-STUDIO-SEC-0001.md",
+  ".engineering/security-exceptions/IRIS-STUDIO-SEC-0001.json",
   ".engineering/TEST-PLAN.md",
   ".engineering/DEPLOYMENT.md",
   ".engineering/BACKLOG.md",
@@ -40,6 +43,7 @@ const lock = readJson("package-lock.json");
 const gefState = readJson(".gef/init-state.json");
 const gefAdoptState = readJson(".gef/adopt-state.json");
 const checkpoint = readJson(".engineering/CHECKPOINT.json");
+const securityException = readJson(".engineering/security-exceptions/IRIS-STUDIO-SEC-0001.json");
 const gefVersion = "1.1.2";
 
 if (manifest) {
@@ -68,6 +72,10 @@ if (gefAdoptState?.kind !== "gef.adopt.state" || gefAdoptState?.productVersion !
 
 if (checkpoint?.schemaVersion !== 2 || checkpoint?.project !== "IRIS Studio") {
   errors.push(".engineering/CHECKPOINT.json must use the GEF-compatible schema and project identity");
+}
+
+if (securityException?.id !== "IRIS-STUDIO-SEC-0001" || securityException?.status !== "ACTIVE") {
+  errors.push("IRIS-STUDIO-SEC-0001 must be present as the active exact audit policy record");
 }
 
 const installedPackage = readJson("node_modules/@gef-bootstrap/cli/package.json");

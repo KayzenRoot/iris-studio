@@ -6,7 +6,8 @@
 - Dependency vulnerability alerts and Dependabot security updates are enabled.
 - Workflow-level and repository-default `GITHUB_TOKEN` permissions are read-only.
 - Workflow actions are pinned to full commit SHAs, and the repository allows only the actions used by the baseline workflow.
-- `npm audit --audit-level=high` is part of baseline validation.
+- `npm run audit:policy` captures the complete `npm audit --json` output and fails on any Critical, any unapproved High, expired exception, newly compatible fix, or allowlisted advisory in production dependencies. Keep the raw audit output visible in the command output and retained as evidence.
+- `npm audit --omit=dev --audit-level=high` independently gates the production/runtime dependency tree.
 
 ## GitHub security entitlement limits preserved from WO-0001
 The repository is public and owned by the personal GitHub user `KayzenRoot`. Provider-pattern secret scanning and push protection are enabled. Optional `secret_scanning_non_provider_patterns` and `secret_scanning_validity_checks` remain disabled under the current account/repository entitlement. Reassess only if ownership or entitlements change.
@@ -33,6 +34,21 @@ GEF `doctor` reports dependency provenance as `unverified` and GitHub security c
 - Treat generated code and package scripts as untrusted until quality/security checks pass.
 - Redact logs and cap retained process output.
 - Keep large/generated binary artifacts out of IRIS source Git history.
+
+## M02 Codex Bridge controls
+- Resolve only the native `codex` executable from `PATH`; never execute `.cmd`/`.bat` shims or user-supplied executable paths. Use Node process spawning with an argument array and `shell: false`.
+- Detect ChatGPT sign-in through the supported `codex login status` command. Keep only transient fixed classification markers; discard all raw login output. Do not open, inspect, copy, log or persist Codex credentials. Remove API-key/token/secret variables from the child environment and do not accept API keys in IRIS requests or project settings.
+- Pass task text through stdin, not the process command line. Invoke non-interactively with JSON events, ephemeral session storage, `--ignore-user-config`, `workspace-write` sandboxing, empty additional writable roots, temporary-root exclusions and network access disabled. The user's auth store remains available only to the Codex CLI. Do not offer arbitrary executable, shell, cwd, args, sandbox, or approval-policy controls in the API.
+- Native Windows uses Codex's documented `unelevated` sandbox fallback because the default sandbox did not perform the disposable marker write in the live smoke. This uses the restricted-token/ACL boundary, while IRIS path/tree checks remain active and sandbox network access stays disabled; the elevated mode provides stronger network isolation.
+- Derive workspace paths from persisted project identity, resolve them canonically, reject repository-contained/outside paths and symlinks/junctions/reparse points in the project tree, and revalidate immediately before spawn.
+- Limit active Codex work to one job, task size to 8 KiB UTF-8, runtime to five minutes, and retained stdout/stderr to 32 KiB each. Normalize JSON events; redact credential-like text before persistence or display; never persist the task prompt or raw JSON event stream.
+- Record a versioned structured result under the IRIS user-data directory, outside the project workspace and source repository. Cancellation, timeout and shutdown kill the process tree; stale RUNNING records become INTERRUPTED and are not resumed automatically.
+- Require same-origin loopback POST requests for start/cancel. Generic CI uses process doubles; live CLI smoke is explicit and never reads credential stores.
+
+## Governed dependency exception
+`IRIS-STUDIO-SEC-0001` is the only active exception: the exact `GHSA-VFJ7-8CJW-P6XM` advisory (`braces` through `3.0.3`) currently propagates High findings through the dev-only lint/tooling chain `@next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3`. The current production-only audit reports zero vulnerabilities. GitHub's reviewed advisory lists no patched version; npm's suggested remediation downgrades the Next ESLint plugin to 14.2.35 with a major-version change, so it is not a compatible fix for this Next 16 repository.
+
+The exception is exact and expires for review on 2026-10-17 (14 days after approval). `audit:policy` validates every finding, dependency path, dev-only lockfile flag, production-only audit, expiry and npm fixability on every run; new or changed High/Critical findings fail closed. Remove the exception immediately when a compatible official fix appears. Full audit output is never suppressed. The evidence and package-level classifications are in `.engineering/evidence/IRIS-STUDIO-SEC-0001/`.
 
 ## Risk levels
 M01, M03, M06, M07: STANDARD.

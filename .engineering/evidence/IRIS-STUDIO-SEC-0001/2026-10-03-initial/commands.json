@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-03",
+  "cwd": "D:\\Projects\\iris-studio-wo0004",
+  "commands": [
+    {
+      "command": "npm audit --omit=dev --audit-level=high",
+      "exitCode": 0,
+      "stdout": "npm-audit-omit-dev.txt",
+      "stderr": "npm-audit-omit-dev.stderr.txt"
+    },
+    {
+      "command": "npm ls braces brace-expansion @next/eslint-plugin-next",
+      "exitCode": 0,
+      "stdout": "npm-ls.txt",
+      "stderr": "npm-ls.stderr.txt"
+    },
+    {
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "stdout": "npm-audit.json",
+      "stderr": "npm-audit.stderr.txt"
+    }
+  ]
+}

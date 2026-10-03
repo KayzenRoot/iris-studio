@@ -3,10 +3,11 @@ import { describe, expect, it } from "vitest";
 import { checkIntegrations } from "../../src/server/health";
 
 describe("integration health detection", () => {
-  it("reports only observed local availability and leaves Codex authentication uninspected", async () => {
+  it("reports authenticated Codex readiness without exposing probe output", async () => {
     const checkedUrls: string[] = [];
     const health = await checkIntegrations({
       findExecutable: (name) => (name === "codex" ? "C:/tools/codex.cmd" : null),
+      codexProbe: async () => ({ status: "READY", version: "1.2.3", detail: "Codex CLI pronto com autenticação ChatGPT local." }),
       fetcher: async (input) => {
         checkedUrls.push(String(input));
         return new Response("{}", { status: 200 });
@@ -14,8 +15,9 @@ describe("integration health detection", () => {
     });
 
     expect(health.codex).toMatchObject({
-      status: "AVAILABLE",
-      detail: expect.stringMatching(/autenticação.*não inspecionada/i),
+      status: "READY",
+      version: "1.2.3",
+      detail: expect.stringMatching(/autenticação ChatGPT/i),
     });
     expect(health.comfyui.status).toBe("AVAILABLE");
     expect(health.blender.status).toBe("UNAVAILABLE");
@@ -25,7 +27,7 @@ describe("integration health detection", () => {
 
   it("turns an offline local service into UNAVAILABLE without crashing the health surface", async () => {
     const health = await checkIntegrations({
-      findExecutable: () => null,
+      codexProbe: async () => ({ status: "UNAVAILABLE", detail: "Codex CLI nativo não encontrado no PATH." }),
       fetcher: async () => {
         throw new Error("ECONNREFUSED");
       },
@@ -38,7 +40,8 @@ describe("integration health detection", () => {
 
   it("reports probe failures and unhealthy responses as MISCONFIGURED", async () => {
     const health = await checkIntegrations({
-      findExecutable: () => {
+      findExecutable: () => { throw new Error("PATH cannot be inspected"); },
+      codexProbe: async () => {
         throw new Error("PATH cannot be inspected");
       },
       fetcher: async () => new Response("", { status: 500 }),

@@ -3,7 +3,7 @@
 IRIS Studio is a local-first application for orchestrating high-quality complete website creation with a dashboard, local ComfyUI, an IRIS-owned Blender MCP/3D engine and the user's locally authenticated Codex CLI.
 
 ## Current status
-Repository foundation and MVP planning are complete. **M01 / IRIS-STUDIO-WO-0003 — Local Core & Dashboard is APPROVED and merged** in PR #13. The next legal implementation increment is **M02 / IRIS-STUDIO-WO-0004 — Codex Bridge**.
+Repository foundation and MVP planning are complete. **M01 / IRIS-STUDIO-WO-0003 — Local Core & Dashboard is APPROVED and merged** in PR #13. **M02 / IRIS-STUDIO-WO-0004 — Codex Bridge** is the active implementation increment on PR #15.
 
 ## Local operation (M01)
 Use Node.js 24.19.0 and npm 11.17.0 as pinned in the repository:
@@ -13,9 +13,9 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:3000`. The dashboard, project briefings, SQLite database, and empty project workspaces stay on this device. By default, Windows data is stored under `%LOCALAPPDATA%\IRIS Studio`; macOS/Linux use `$XDG_DATA_HOME/iris-studio` or `~/.local/share/iris-studio`. Set `IRIS_DATA_DIR` to an absolute path outside the source repository to choose another data directory. `PORT` may select a port from 1 through 65535; the server remains bound to loopback.
+Open `http://127.0.0.1:3000`. The dashboard, project briefings, SQLite database, project workspaces, and Codex run records stay on this device. Codex can write only during a task submitted for that project's workspace. By default, Windows data is stored under `%LOCALAPPDATA%\IRIS Studio`; macOS/Linux use `$XDG_DATA_HOME/iris-studio` or `~/.local/share/iris-studio`. Set `IRIS_DATA_DIR` to an absolute path outside the source repository to choose another data directory. `PORT` may select a port from 1 through 65535; the server remains bound to loopback.
 
-The System Health page reports only local checks: database/migration access, Codex CLI and Blender presence on `PATH`, and a response from the default local ComfyUI health endpoint. It does not inspect credentials or run external tools, jobs, workflows, Blender automation, or website generation.
+The System Health page reports local database/migration status, Codex CLI version and ChatGPT sign-in status, Blender presence, and a response from the default local ComfyUI endpoint. IRIS retains only the Codex login classification and version, not login output or credentials. Jobs use the existing ChatGPT-authenticated CLI session; IRIS does not require an OpenAI API key.
 
 ## Local validation
 
@@ -28,6 +28,8 @@ npm run build
 npm test
 npm run gef:doctor
 npm run gef:status
+npm audit --omit=dev --audit-level=high
+npm run audit:policy
 ```
 
 Use the repository script for Playwright installation so the lockfile-backed Playwright package is used consistently with CI.

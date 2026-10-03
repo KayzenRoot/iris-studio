@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageHeading } from "../../../components/page-heading";
+import { CodexPanel } from "./codex-panel";
 import { getAppStore } from "@/server/runtime";
 
 export const dynamic = "force-dynamic";
@@ -31,9 +32,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
           <div className="palette-row"><span>Paleta inicial</span><div className="palette-swatches">{project.brief.colors.map((color) => <span key={color} className="palette-swatch" style={{ backgroundColor: color }} title={color} />)}</div><strong>{project.brief.colors.join(" · ")}</strong></div>
         </section>
-        <aside className="detail-side-card"><p className="eyebrow">WORKSPACE</p><div className="workspace-illustration" aria-hidden="true"><span className="folder-back" /><span className="folder-front" /><span className="folder-spark">✳</span></div><h2>Seu espaço já existe.</h2><p>O workspace local foi criado junto com o projeto. Nenhum arquivo foi gerado nesta etapa.</p><div className="workspace-meta"><span>CRIADO EM</span><strong>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date(project.createdAt))}</strong></div><Link href="/system-health" className="subtle-link">Ver System Health <span aria-hidden="true">→</span></Link></aside>
+        <aside className="detail-side-card"><p className="eyebrow">WORKSPACE</p><div className="workspace-illustration" aria-hidden="true"><span className="folder-back" /><span className="folder-front" /><span className="folder-spark">✳</span></div><h2>Seu espaço está isolado.</h2><p>Tarefas Codex deste projeto usam este workspace local, com proteção contra caminhos externos e links simbólicos.</p><div className="workspace-meta"><span>CRIADO EM</span><strong>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date(project.createdAt))}</strong></div><Link href="/system-health" className="subtle-link">Ver System Health <span aria-hidden="true">→</span></Link></aside>
       </div>
-      <section className="detail-next-step"><span className="detail-next-icon">◌</span><div><p className="eyebrow">PRÓXIMAS ETAPAS</p><h2>Uma base pronta para evoluir.</h2><p>Execução Codex, geração visual e automação entram em módulos futuros, depois da aprovação de cada etapa.</p></div><span className="coming-soon">EM BREVE</span></section>
+      <CodexPanel projectId={project.id} />
     </>
   );
 }

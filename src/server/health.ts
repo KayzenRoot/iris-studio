@@ -1,11 +1,14 @@
 import { accessSync, constants, statSync } from "node:fs";
 import { delimiter, join } from "node:path";
 
-export type HealthStatus = "AVAILABLE" | "UNAVAILABLE" | "MISCONFIGURED";
+import { CodexAdapter, type CodexProbeResult } from "./codex/adapter";
+
+export type HealthStatus = "AVAILABLE" | "READY" | "UNAUTHENTICATED" | "UNAVAILABLE" | "MISCONFIGURED";
 
 export interface IntegrationHealth {
   status: HealthStatus;
   detail: string;
+  version?: string;
 }
 
 export interface IntegrationsHealth {
@@ -17,6 +20,7 @@ export interface IntegrationsHealth {
 interface IntegrationProbeOptions {
   findExecutable?: (name: string) => string | null;
   fetcher?: typeof fetch;
+  codexProbe?: () => Promise<CodexProbeResult>;
 }
 
 export function findLocalExecutable(name: string) {
@@ -62,12 +66,13 @@ function executableHealth(
 export async function checkIntegrations(options: IntegrationProbeOptions = {}): Promise<IntegrationsHealth> {
   const findExecutable = options.findExecutable ?? findLocalExecutable;
   const fetcher = options.fetcher ?? fetch;
-  const codex = executableHealth(
-    "codex",
-    "Codex CLI",
-    "Codex CLI encontrado; autenticação não inspecionada pelo M01.",
-    findExecutable,
-  );
+  let codex: IntegrationHealth;
+  try {
+    const probe = await (options.codexProbe ?? (() => new CodexAdapter().probe()))();
+    codex = { status: probe.status, detail: probe.detail, version: probe.version };
+  } catch {
+    codex = { status: "MISCONFIGURED", detail: "Não foi possível verificar a instalação ou sessão local do Codex CLI." };
+  }
   const blender = executableHealth(
     "blender",
     "Blender",

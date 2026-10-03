@@ -39,4 +39,17 @@ WO-0001 approved no product architecture. Those decisions were deferred to MVP p
 - D-003-04: M01 health is detection-only. Codex CLI and Blender are checked for executable presence; ComfyUI is queried only at its default loopback health endpoint. Authentication, MCP readiness, models, execution, and generated websites are not asserted.
 - D-003-05: Playwright browser installation in documented validation uses the lockfile-backed repository script `npm run ci:install:playwright`, not a free-form `npx` fetch.
 
-M01 independent audit is **APPROVED**. PR #13 was squash-merged as `b85c6f22be21c74d878379570dd426a243483a1c`. The canonical checkpoint authorizes M02 / IRIS-STUDIO-WO-0004 as the next legal increment.
+M01 independent audit is **APPROVED**. PR #13 was squash-merged as `b85c6f22be21c74d878379570dd426a243483a1c`.
+
+## IRIS-STUDIO-WO-0004 — approved M02 implementation decisions
+- D-004-01: Use the native locally installed Codex CLI as the sole MVP execution bridge; IRIS does not introduce an OpenAI API-key path.
+- D-004-02: Classify ChatGPT readiness via supported CLI commands while retaining only readiness/version markers; never read or persist Codex credential-store contents or raw login output.
+- D-004-03: Execute only fixed Codex argument arrays through `CodexAdapter`, with `shell:false`, prompt on stdin, canonical project cwd, ignored user config for task execution and bounded sandbox settings.
+- D-004-04: Permit only one active Codex run per IRIS process in M02. Persist run/generation/job state plus sanitized bounded logs and versioned result metadata; never persist task prompt text.
+- D-004-05: Revalidate the UUID-derived project workspace and full no-link tree before process launch; reject repository-contained/noncanonical/symlink paths.
+- D-004-06: Cancellation/timeout terminates the process tree; after process restart, prior RUNNING/CANCELLING records become INTERRUPTED and are not resumed implicitly.
+- D-004-07: Windows `unelevated` sandbox is accepted for the MVP bridge with its weaker network-isolation limitation explicitly recorded; `network_access=false` is not evidence of strong network isolation.
+- D-004-08: M02 independent audit is APPROVED on candidate `a56669cc6df7267b5a1385a594095ac616ace1cf`, subject to final HEAD validation and merge.
+
+## IRIS-STUDIO-WO-0004 — governed dependency exception
+- D-SEC-0001-01 (2026-10-03): Temporary exception `IRIS-STUDIO-SEC-0001` governs only `GHSA-VFJ7-8CJW-P6XM` / `CVE-2026-93687`. The four High npm audit entries are confined to the recorded dev-only Next ESLint tooling path, the production-only audit has zero findings, and the official advisory lists no patched `braces` release. Do not downgrade the Next 16 toolchain to accept npm's incompatible major fix. Require `npm run audit:policy` plus the production-only audit; review by 2026-10-17 and remove immediately once an official compatible fix is available. This temporary exception does not waive the MVP Definition of Done requirement to close known High/Critical findings.

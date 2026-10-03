@@ -1,0 +1,84 @@
+{
+  "id": "IRIS-STUDIO-SEC-0001",
+  "status": "ACTIVE",
+  "approvedOn": "2026-10-03",
+  "reviewDue": "2026-10-17",
+  "advisories": [
+    {
+      "id": "GHSA-VFJ7-8CJW-P6XM",
+      "cve": "CVE-2026-93687",
+      "severity": "high",
+      "affectedPackage": "braces",
+      "affectedRange": "<=3.0.3",
+      "officialFixedVersions": [],
+      "officialSource": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+      "npmFixAvailableObserved": {
+        "name": "@next/eslint-plugin-next",
+        "version": "14.2.35",
+        "isSemVerMajor": true,
+        "compatible": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "package": "@next/eslint-plugin-next",
+      "version": "16.3.8",
+      "severity": "high",
+      "advisoryId": "GHSA-VFJ7-8CJW-P6XM",
+      "scope": "dev-only",
+      "node": "node_modules/@next/eslint-plugin-next",
+      "dependencyPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8",
+      "advisoryPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3",
+      "npmFixAvailable": { "name": "@next/eslint-plugin-next", "version": "14.2.35", "isSemVerMajor": true, "compatible": false },
+      "officialFixedVersion": null
+    },
+    {
+      "package": "fast-glob",
+      "version": "3.3.1",
+      "severity": "high",
+      "advisoryId": "GHSA-VFJ7-8CJW-P6XM",
+      "scope": "dev-only",
+      "node": "node_modules/fast-glob",
+      "dependencyPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1",
+      "advisoryPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3",
+      "npmFixAvailable": { "name": "@next/eslint-plugin-next", "version": "14.2.35", "isSemVerMajor": true, "compatible": false },
+      "officialFixedVersion": null
+    },
+    {
+      "package": "micromatch",
+      "version": "4.0.8",
+      "severity": "high",
+      "advisoryId": "GHSA-VFJ7-8CJW-P6XM",
+      "scope": "dev-only",
+      "node": "node_modules/micromatch",
+      "dependencyPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8",
+      "advisoryPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3",
+      "npmFixAvailable": { "name": "@next/eslint-plugin-next", "version": "14.2.35", "isSemVerMajor": true, "compatible": false },
+      "officialFixedVersion": null
+    },
+    {
+      "package": "braces",
+      "version": "3.0.3",
+      "severity": "high",
+      "advisoryId": "GHSA-VFJ7-8CJW-P6XM",
+      "scope": "dev-only",
+      "node": "node_modules/braces",
+      "dependencyPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3",
+      "advisoryPath": "root:devDependencies > @next/eslint-plugin-next@16.3.8 > fast-glob@3.3.1 > micromatch@4.0.8 > braces@3.0.3",
+      "npmFixAvailable": { "name": "@next/eslint-plugin-next", "version": "14.2.35", "isSemVerMajor": true, "compatible": false },
+      "officialFixedVersion": null
+    }
+  ],
+  "advisoryPaths": [
+    {
+      "advisoryId": "GHSA-VFJ7-8CJW-P6XM",
+      "nodes": [
+        "node_modules/@next/eslint-plugin-next",
+        "node_modules/fast-glob",
+        "node_modules/micromatch",
+        "node_modules/braces"
+      ]
+    }
+  ]
+}

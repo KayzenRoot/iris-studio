@@ -1,28 +1,36 @@
 {
   "schemaVersion": 2,
   "project": "IRIS Studio",
-  "status": "M01_APPROVED",
+  "status": "M02_APPROVED",
   "phase": "MVP_IMPLEMENTATION",
   "activeWorkOrder": null,
-  "lastApprovedWorkOrder": "IRIS-STUDIO-WO-0003",
-  "approvedModules": 1,
+  "lastApprovedWorkOrder": "IRIS-STUDIO-WO-0004",
+  "approvedModules": 2,
   "totalMvpModules": 8,
-  "overallCompletionPercent": 12.5,
-  "remainingCompletionPercent": 87.5,
-  "completionBasis": "1 of 8 approved MVP implementation modules",
-  "m01": {
-    "baseSha": "f30937d57980ee4280487ba167677ab0cb170d8d",
-    "executorCandidateSha": "f8515dd874a5e96bd810e641dfdb9b3214a602f9",
-    "independentAuditCorrectionSha": "1b6758e0fe1cc6197fe785368c4b883153416c91",
-    "verdict": "APPROVED"
+  "overallCompletionPercent": 25,
+  "remainingCompletionPercent": 75,
+  "completionBasis": "2 of 8 approved MVP implementation modules",
+  "m02": {
+    "baseSha": "17baf076dedc5c17a37a5a9fe0b4b333f18b61a4",
+    "executorCandidateSha": "a56669cc6df7267b5a1385a594095ac616ace1cf",
+    "verdict": "APPROVED",
+    "liveCodexSmoke": "PASS",
+    "codexCliVersion": "0.160.0",
+    "runtimeHighCritical": 0,
+    "governedDevOnlyHigh": 4,
+    "securityException": "IRIS-STUDIO-SEC-0001",
+    "securityExceptionReviewDue": "2026-10-17"
   },
-  "nextLegalStage": "IRIS-STUDIO-WO-0004",
-  "stopState": "M01_APPROVED_M02_NEXT",
+  "nextLegalStage": "IRIS-STUDIO-WO-0005",
+  "stopState": "M02_APPROVED_M03_NEXT_AFTER_MERGE",
   "gefVersion": "1.1.2",
   "knownReviewStates": [
     "GEF dependency provenance review",
     "GEF mutable refs review",
     "GEF operator stale / unexpected drift",
+    "IRIS-STUDIO-SEC-0001 active dev-only High exception until 2026-10-17",
+    "Windows Codex sandbox unelevated network isolation is weaker than elevated",
+    "Sonar new-code coverage not imported",
     "CodeRabbit external review pending at checkpoint compilation"
   ]
 }

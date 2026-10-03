@@ -21,6 +21,7 @@ This directory is the canonical repository Source Pack.
 - [Backlog](BACKLOG.md)
 - [Definition of done](DEFINITION-OF-DONE.md)
 - [Decisions ledger](DECISIONS-LEDGER.md)
+- [Security exceptions](security-exceptions/README.md)
 - [Checkpoint](CHECKPOINT.md) / [machine checkpoint](CHECKPOINT.json)
 - [Work Orders](work-orders/README.md)
 
