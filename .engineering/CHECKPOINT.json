@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "project": "IRIS Studio",
-  "status": "M02_APPROVED",
+  "status": "M02_APPROVED_AND_MERGED",
   "phase": "MVP_IMPLEMENTATION",
   "activeWorkOrder": null,
   "lastApprovedWorkOrder": "IRIS-STUDIO-WO-0004",
@@ -13,6 +13,8 @@
   "m02": {
     "baseSha": "17baf076dedc5c17a37a5a9fe0b4b333f18b61a4",
     "executorCandidateSha": "a56669cc6df7267b5a1385a594095ac616ace1cf",
+    "finalAuditCandidateSha": "73e263f2c028ebe4b731fe1520b0a8dbf88c60ef",
+    "mergeSha": "0a978130ef75509addd0514b18d822652d4cdddb",
     "verdict": "APPROVED",
     "liveCodexSmoke": "PASS",
     "codexCliVersion": "0.160.0",
@@ -22,7 +24,7 @@
     "securityExceptionReviewDue": "2026-10-17"
   },
   "nextLegalStage": "IRIS-STUDIO-WO-0005",
-  "stopState": "M02_APPROVED_M03_NEXT_AFTER_MERGE",
+  "stopState": "M02_MERGED_M03_NEXT",
   "gefVersion": "1.1.2",
   "knownReviewStates": [
     "GEF dependency provenance review",
@@ -31,6 +33,6 @@
     "IRIS-STUDIO-SEC-0001 active dev-only High exception until 2026-10-17",
     "Windows Codex sandbox unelevated network isolation is weaker than elevated",
     "Sonar new-code coverage not imported",
-    "CodeRabbit external review pending at checkpoint compilation"
+    "CodeRabbit external review pending/unknown during M02 closeout"
   ]
 }
