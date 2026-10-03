@@ -3,8 +3,9 @@ import { existsSync, lstatSync, mkdtempSync, readdirSync, readFileSync, rmSync }
 import { createServer } from "node:net";
 import { homedir } from "node:os";
 import { join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
-async function reserveLoopbackPort() {
+export async function reserveLoopbackPort() {
   const server = createServer();
   await new Promise((resolveListen, reject) => {
     server.once("error", reject);
@@ -16,7 +17,7 @@ async function reserveLoopbackPort() {
   return address.port;
 }
 
-async function waitForHealth(baseUrl, child) {
+export async function waitForHealth(baseUrl, child) {
   for (let attempt = 0; attempt < 80; attempt += 1) {
     if (child.exitCode !== null) throw new Error(`Servidor local encerrou com código ${child.exitCode}.`);
     try {
@@ -30,7 +31,7 @@ async function waitForHealth(baseUrl, child) {
   throw new Error("O servidor local não ficou pronto a tempo.");
 }
 
-async function stopServer(child) {
+export async function stopServer(child) {
   if (child.exitCode !== null) return;
   const stopped = new Promise((resolveExit) => child.once("exit", resolveExit));
   child.kill("SIGTERM");
@@ -44,7 +45,7 @@ async function stopServer(child) {
   }
 }
 
-async function postJson(url, origin, body) {
+export async function postJson(url, origin, body) {
   return fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json", origin },
@@ -168,7 +169,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(JSON.stringify({ result: "FAIL", reason: error instanceof Error ? error.message : "falha desconhecida" }));
-  process.exitCode = 1;
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  main().catch((error) => {
+    console.error(JSON.stringify({ result: "FAIL", reason: error instanceof Error ? error.message : "falha desconhecida" }));
+    process.exitCode = 1;
+  });
+}

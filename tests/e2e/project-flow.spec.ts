@@ -8,6 +8,8 @@ test("creates a project and reopens its persisted brief from the dashboard", asy
   await page.getByLabel("Nome do projeto").fill("Casa Aurora");
   await page.getByLabel("Tipo de site").selectOption("portfolio");
   await page.getByLabel("Resumo do projeto").fill("Portfólio para um estúdio de arquitetura autoral.");
+  await page.getByLabel("Objetivo principal").fill("Receber pedidos de projetos de arquitetura residencial.");
+  await page.getByLabel("Público principal").fill("Pessoas que buscam orientação para espaços de moradia.");
   await page.getByLabel("Páginas desejadas").fill("Início, Projetos, Contato");
   await page.getByLabel("Referências").fill("https://example.com/referencia");
   await page.getByLabel("Tom de voz").fill("Editorial e acolhedor");
@@ -28,7 +30,7 @@ test("creates a project and reopens its persisted brief from the dashboard", asy
   expect(browserErrors).toEqual([]);
 
   await page.screenshot({
-    path: ".engineering/evidence/IRIS-STUDIO-WO-0003-project-detail.png",
+    path: ".engineering/evidence/IRIS-STUDIO-WO-0005-project-detail.png",
     fullPage: true,
   });
 
@@ -36,7 +38,7 @@ test("creates a project and reopens its persisted brief from the dashboard", asy
   await expect(page.getByRole("heading", { name: "Ideias que ganham forma." })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Casa Aurora" })).toBeVisible();
   await page.screenshot({
-    path: ".engineering/evidence/IRIS-STUDIO-WO-0003-dashboard.png",
+    path: ".engineering/evidence/IRIS-STUDIO-WO-0005-dashboard.png",
     fullPage: true,
   });
 });
