@@ -5,6 +5,10 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+.next/
+next-env.d.ts
+playwright-report/
+test-results/
 
 # Local secrets
 .env

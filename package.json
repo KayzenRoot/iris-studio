@@ -2,17 +2,46 @@
   "name": "iris-studio",
   "version": "0.0.0",
   "private": true,
-  "description": "Repository foundation for IRIS Studio; product design is TBD.",
+  "description": "Local-first IRIS Studio dashboard and project core.",
   "packageManager": "npm@11.17.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=24.19.0"
   },
   "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "lint": "eslint src tests scripts/run-e2e.mjs eslint.config.mjs next.config.ts playwright.config.ts vitest.config.mts",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run tests/unit",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
     "check:baseline": "node scripts/check-baseline.mjs",
     "gef:doctor": "gef doctor",
     "gef:status": "gef status"
   },
   "devDependencies": {
-    "@gef-bootstrap/cli": "1.1.2"
+    "@eslint/js": "10.0.1",
+    "@gef-bootstrap/cli": "1.1.2",
+    "@next/eslint-plugin-next": "16.3.8",
+    "@playwright/test": "1.63.0",
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "16.4.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.0",
+    "vite": "8.3.2",
+    "vitest": "5.0.3"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
   }
 }

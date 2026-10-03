@@ -6,6 +6,11 @@ Host-native local-first. Docker is FUTURE because direct local Codex/ComfyUI/Ble
 ## App stack
 Next.js App Router + TypeScript; lightweight styling; runtime schemas; SQLite with migrations; Playwright. Exact versions pinned by M01.
 
+### M01 local core
+The dashboard runs as a loopback-only Next.js application. SQLite is accessed through `better-sqlite3`, a versioned SQL migration, and a small server-side store. Zod validates project briefs at the API and persistence boundary. Project rows and briefs are stored in SQLite; empty project workspace directories are created separately under the user data directory. The default Windows root is `%LOCALAPPDATA%\IRIS Studio`; macOS/Linux use `$XDG_DATA_HOME/iris-studio` or `~/.local/share/iris-studio`. An explicit `IRIS_DATA_DIR` must be absolute and outside the source repository. The app does not expose workspace filesystem paths through its project API.
+
+The M01 System Health probes are observational: Codex CLI and Blender are checked for presence on `PATH`; ComfyUI is queried only at `127.0.0.1:8188/system_stats`. A positive result does not assert authentication, model availability, MCP readiness, or execution capability.
+
 ## Generated sites
 Independent Next.js + TypeScript workspaces. Three.js/React Three Fiber/GSAP optional per Site Blueprint.
 
